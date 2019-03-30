@@ -1,14 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <math.h>
 #include <time.h>
 #include <assert.h>
 #include <inttypes.h>
-#include <sys/time.h>
-#include "fastcommon/skiplist_set.h"
-#include "fastcommon/logger.h"
-#include "fastcommon/shared_func.h"
+#include "../skiplist_set.h"
+#include "../logger.h"
+#include "../shared_func.h"
 
 #define COUNT 1000000
 #define LEVEL_COUNT 16
@@ -20,30 +17,27 @@ static SkiplistSet sl;
 static SkiplistSetIterator iterator;
 static int instance_count = 0;
 
-static void free_test_func(void *ptr)
-{
+static void free_test_func(void *ptr) {
     instance_count--;
 }
 
-static int compare_func(const void *p1, const void *p2)
-{
-    return *((int *)p1) - *((int *)p2);
+static int compare_func(const void *p1, const void *p2) {
+    return *((int *) p1) - *((int *) p2);
 }
 
-void set_rand_numbers(const int multiple)
-{
+void set_rand_numbers(const int multiple) {
     int i;
     int tmp;
     int index1;
     int index2;
 
-    for (i=0; i<COUNT; i++) {
+    for (i = 0; i < COUNT; i++) {
         numbers[i] = multiple * i + 1;
     }
 
-    for (i=0; i<COUNT; i++) {
-        index1 = LAST_INDEX * (int64_t)rand() / (int64_t)RAND_MAX;
-        index2 = LAST_INDEX * (int64_t)rand() / (int64_t)RAND_MAX;
+    for (i = 0; i < COUNT; i++) {
+        index1 = LAST_INDEX * (int64_t) rand() / (int64_t) RAND_MAX;
+        index2 = LAST_INDEX * (int64_t) rand() / (int64_t) RAND_MAX;
         if (index1 == index2) {
             continue;
         }
@@ -53,8 +47,7 @@ void set_rand_numbers(const int multiple)
     }
 }
 
-static int test_insert()
-{
+static int test_insert() {
     int i;
     int result;
     int64_t start_time;
@@ -65,8 +58,8 @@ static int test_insert()
 
     instance_count = 0;
     start_time = get_current_time_ms();
-    for (i=0; i<COUNT; i++) {
-        if ((result=skiplist_set_insert(&sl, numbers + i)) != 0) {
+    for (i = 0; i < COUNT; i++) {
+        if ((result = skiplist_set_insert(&sl, numbers + i)) != 0) {
             return result;
         }
         instance_count++;
@@ -77,9 +70,9 @@ static int test_insert()
     printf("insert time used: %"PRId64" ms\n", end_time - start_time);
 
     start_time = get_current_time_ms();
-    for (i=0; i<COUNT; i++) {
+    for (i = 0; i < COUNT; i++) {
         value = skiplist_set_find(&sl, numbers + i);
-        assert(value != NULL && *((int *)value) == numbers[i]);
+        assert(value != NULL && *((int *) value) == numbers[i]);
     }
     end_time = get_current_time_ms();
     printf("find time used: %"PRId64" ms\n", end_time - start_time);
@@ -87,29 +80,28 @@ static int test_insert()
     start_time = get_current_time_ms();
     i = 0;
     skiplist_set_iterator(&sl, &iterator);
-    while ((value=skiplist_set_next(&iterator)) != NULL) {
+    while ((value = skiplist_set_next(&iterator)) != NULL) {
         i++;
-        if (i != *((int *)value)) {
-            fprintf(stderr, "i: %d != value: %d\n", i, *((int *)value));
+        if (i != *((int *) value)) {
+            fprintf(stderr, "i: %d != value: %d\n", i, *((int *) value));
             break;
         }
     }
-    assert(i==COUNT);
+    assert(i == COUNT);
 
     end_time = get_current_time_ms();
     printf("iterator time used: %"PRId64" ms\n", end_time - start_time);
     return 0;
 }
 
-static void test_delete()
-{
+static void test_delete() {
     int i;
     int64_t start_time;
     int64_t end_time;
     void *value;
 
     start_time = get_current_time_ms();
-    for (i=0; i<COUNT; i++) {
+    for (i = 0; i < COUNT; i++) {
         assert(skiplist_set_delete(&sl, numbers + i) == 0);
     }
     assert(instance_count == 0);
@@ -118,7 +110,7 @@ static void test_delete()
     printf("delete time used: %"PRId64" ms\n", end_time - start_time);
 
     start_time = get_current_time_ms();
-    for (i=0; i<COUNT; i++) {
+    for (i = 0; i < COUNT; i++) {
         value = skiplist_set_find(&sl, numbers + i);
         assert(value == NULL);
     }
@@ -127,14 +119,13 @@ static void test_delete()
 
     i = 0;
     skiplist_set_iterator(&sl, &iterator);
-    while ((value=skiplist_set_next(&iterator)) != NULL) {
+    while ((value = skiplist_set_next(&iterator)) != NULL) {
         i++;
     }
-    assert(i==0);
+    assert(i == 0);
 }
 
-static void test_find_range()
-{
+static void test_find_range() {
     int n_start;
     int n_end;
     int result;
@@ -144,8 +135,8 @@ static void test_find_range()
 
     set_rand_numbers(2);
 
-    for (i=0; i<COUNT; i++) {
-        if ((result=skiplist_set_insert(&sl, numbers + i)) != 0) {
+    for (i = 0; i < COUNT; i++) {
+        if ((result = skiplist_set_insert(&sl, numbers + i)) != 0) {
             return;
         }
         instance_count++;
@@ -167,24 +158,23 @@ static void test_find_range()
     assert(result == 0);
 
     i = 0;
-    while ((value=(int *)skiplist_set_next(&iterator)) != NULL) {
+    while ((value = (int *) skiplist_set_next(&iterator)) != NULL) {
         printf("value: %d\n", *value);
         i++;
     }
     printf("count: %d\n\n", i);
 }
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
     int result;
 
     log_init();
-    numbers = (int *)malloc(sizeof(int) * COUNT);
+    numbers = (int *) malloc(sizeof(int) * COUNT);
     srand(time(NULL));
 
     fast_mblock_manager_init();
     result = skiplist_set_init_ex(&sl, LEVEL_COUNT, compare_func,
-            free_test_func, MIN_ALLOC_ONCE);
+                                  free_test_func, MIN_ALLOC_ONCE);
     if (result != 0) {
         return result;
     }

@@ -34,8 +34,8 @@ params:
 return: 0 for success, != 0 for error
 **/
 int get_url_content_ex(const char *url, const int url_len,
-        const int connect_timeout, const int network_timeout,
-        int *http_status, char **content, int *content_len, char *error_info);
+                       const int connect_timeout, const int network_timeout,
+                       int *http_status, char **content, int *content_len, char *error_info);
 
 
 /**
@@ -51,8 +51,8 @@ params:
 return: 0 for success, != 0 for error
 **/
 int get_url_content(const char *url, const int connect_timeout, \
-	const int network_timeout, int *http_status, \
-	char **content, int *content_len, char *error_info);
+    const int network_timeout, int *http_status, \
+    char **content, int *content_len, char *error_info);
 
 /**
 parse url
@@ -75,7 +75,7 @@ params:
 return: param count
 **/
 int http_parse_query_ex(char *url, const int url_len,
-        int *uri_len, KeyValuePairEx *params, const int max_count);
+                        int *uri_len, KeyValuePairEx *params, const int max_count);
 
 /**
 parse url params
@@ -87,7 +87,7 @@ params:
 return: param count
 **/
 int http_parse_url_params(char *param_str, const int param_len,
-        KeyValuePairEx *params, const int max_count);
+                          KeyValuePairEx *params, const int max_count);
 
 #ifdef __cplusplus
 }

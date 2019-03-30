@@ -13,8 +13,7 @@
      (ch >= '0' && ch <= '9') || (ch == '_' || ch == '-'  || \
          ch == '.'))
 
-int detect_json_type(const string_t *input)
-{
+int detect_json_type(const string_t *input) {
     if (input->len < 2) {
         return FC_JSON_TYPE_STRING;
     }
@@ -39,9 +38,8 @@ typedef struct {
 } ParseContext;
 
 static void set_parse_error(const char *str, const char *current,
-        const int expect_len, const char *front,
-        char *error_info, const int error_size)
-{
+                            const int expect_len, const char *front,
+                            char *error_info, const int error_size) {
     const char *show_str;
     int show_len;
 
@@ -51,19 +49,18 @@ static void set_parse_error(const char *str, const char *current,
     }
     show_str = current - show_len;
     snprintf(error_info, error_size, "%s, input: %.*s",
-            front, show_len, show_str);
+             front, show_len, show_str);
 }
 
 static int json_escape_string(const string_t *input, string_t *output,
-        char *error_info, const int error_size)
-{
+                              char *error_info, const int error_size) {
     const char *src;
     const char *end;
     char *dest;
     int size;
 
     size = 2 * input->len + 1;
-    output->str = (char *)malloc(size);
+    output->str = (char *) malloc(size);
     if (output->str == NULL) {
         snprintf(error_info, error_size, "malloc %d bytes fail", size);
         return ENOMEM;
@@ -71,7 +68,7 @@ static int json_escape_string(const string_t *input, string_t *output,
 
     dest = output->str;
     end = input->str + input->len;
-    for (src=input->str; src<end; src++) {
+    for (src = input->str; src < end; src++) {
         switch (*src) {
             case '\\':
                 *dest++ = '\\';
@@ -112,8 +109,7 @@ static int json_escape_string(const string_t *input, string_t *output,
     return 0;
 }
 
-static int next_json_element(ParseContext *context)
-{
+static int next_json_element(ParseContext *context) {
     char *dest;
     char buff[128];
     char quote_ch;
@@ -126,8 +122,8 @@ static int next_json_element(ParseContext *context)
             if (*context->p == '\\') {
                 if (++context->p == context->end) {
                     set_parse_error(context->str, context->p,
-                            EXPECT_STR_LEN, "expect a character after \\",
-                            context->error_info, context->error_size);
+                                    EXPECT_STR_LEN, "expect a character after \\",
+                                    context->error_info, context->error_size);
                     return EINVAL;
                 }
                 switch (*context->p) {
@@ -157,9 +153,9 @@ static int next_json_element(ParseContext *context)
                         break;
                     default:
                         sprintf(buff, "invalid escaped character: %c(0x%x)",
-                                *context->p, (unsigned char)*context->p);
+                                *context->p, (unsigned char) *context->p);
                         set_parse_error(context->str, context->p + 1, EXPECT_STR_LEN,
-                                buff, context->error_info, context->error_size);
+                                        buff, context->error_info, context->error_size);
                         return EINVAL;
                 }
                 context->p++;
@@ -171,7 +167,7 @@ static int next_json_element(ParseContext *context)
         if (context->p == context->end) {
             sprintf(buff, "expect closed character: %c", quote_ch);
             set_parse_error(context->str, context->p, EXPECT_STR_LEN,
-                    buff, context->error_info, context->error_size);
+                            buff, context->error_info, context->error_size);
             return EINVAL;
         }
         context->p++; //skip quote char
@@ -187,8 +183,7 @@ static int next_json_element(ParseContext *context)
 }
 
 static int check_alloc_array(common_array_t *array,
-        char *error_info, const int error_size)
-{
+                             char *error_info, const int error_size) {
     int bytes;
     if (array->count < array->alloc) {
         return 0;
@@ -211,21 +206,18 @@ static int check_alloc_array(common_array_t *array,
 }
 
 static inline int check_alloc_json_array(json_array_t *array,
-                char *error_info, const int error_size)
-{
-    return check_alloc_array((common_array_t *)array, error_info, error_size);
+                                         char *error_info, const int error_size) {
+    return check_alloc_array((common_array_t *) array, error_info, error_size);
 }
 
 static inline int check_alloc_json_map(json_map_t *array,
-                char *error_info, const int error_size)
-{
-    return check_alloc_array((common_array_t *)array, error_info, error_size);
+                                       char *error_info, const int error_size) {
+    return check_alloc_array((common_array_t *) array, error_info, error_size);
 }
 
 static int prepare_json_parse(const string_t *input, common_array_t *array,
-        char *error_info, const int error_size,
-        const char lquote, const char rquote, ParseContext *context)
-{
+                              char *error_info, const int error_size,
+                              const char lquote, const char rquote, ParseContext *context) {
     int buff_len;
 
     array->elements = NULL;
@@ -239,20 +231,20 @@ static int prepare_json_parse(const string_t *input, common_array_t *array,
 
     if (input->str[0] != lquote) {
         snprintf(error_info, error_size,
-                "json array must start with \"%c\"", lquote);
+                 "json array must start with \"%c\"", lquote);
         return EINVAL;
     }
     if (input->str[input->len - 1] != rquote) {
         snprintf(error_info, error_size,
-                "json array must end with \"%c\"", rquote);
+                 "json array must end with \"%c\"", rquote);
         return EINVAL;
     }
 
     buff_len = input->len - 2;
-    array->buff = (char *)malloc(buff_len + 1);
+    array->buff = (char *) malloc(buff_len + 1);
     if (array->buff == NULL) {
         snprintf(error_info, error_size,
-                "malloc %d bytes fail", buff_len + 1);
+                 "malloc %d bytes fail", buff_len + 1);
         return ENOMEM;
     }
 
@@ -267,15 +259,13 @@ static int prepare_json_parse(const string_t *input, common_array_t *array,
 }
 
 int decode_json_array(const string_t *input, json_array_t *array,
-        char *error_info, const int error_size)
-{
+                      char *error_info, const int error_size) {
     ParseContext context;
     int result;
 
     array->element_size = sizeof(string_t);
-    if ((result=prepare_json_parse(input, (common_array_t *)array,
-                    error_info, error_size, '[', ']', &context)) != 0)
-    {
+    if ((result = prepare_json_parse(input, (common_array_t *) array,
+                                     error_info, error_size, '[', ']', &context)) != 0) {
         return result;
     }
 
@@ -291,13 +281,13 @@ int decode_json_array(const string_t *input, json_array_t *array,
 
         if (*context.p == ',') {
             set_parse_error(input->str, context.p + 1,
-                    EXPECT_STR_LEN, "unexpect comma \",\"",
-                    error_info, error_size);
+                            EXPECT_STR_LEN, "unexpect comma \",\"",
+                            error_info, error_size);
             result = EINVAL;
             break;
         }
 
-        if ((result=next_json_element(&context)) != 0) {
+        if ((result = next_json_element(&context)) != 0) {
             break;
         }
 
@@ -309,14 +299,14 @@ int decode_json_array(const string_t *input, json_array_t *array,
                 context.p++;   //skip comma
             } else {
                 set_parse_error(input->str, context.p,
-                        EXPECT_STR_LEN, "expect comma \",\"",
-                        error_info, error_size);
+                                EXPECT_STR_LEN, "expect comma \",\"",
+                                error_info, error_size);
                 result = EINVAL;
                 break;
             }
         }
 
-        if ((result=check_alloc_json_array(array, error_info, error_size)) != 0) {
+        if ((result = check_alloc_json_array(array, error_info, error_size)) != 0) {
             array->count = 0;
             break;
         }
@@ -331,8 +321,7 @@ int decode_json_array(const string_t *input, json_array_t *array,
     return result;
 }
 
-void free_common_array(common_array_t *array)
-{
+void free_common_array(common_array_t *array) {
     if (array->elements != NULL) {
         free(array->elements);
         array->elements = NULL;
@@ -346,15 +335,13 @@ void free_common_array(common_array_t *array)
 }
 
 static int json_quote_string(const string_t *input, char **buff,
-        char *error_info, const int error_size)
-{
+                             char *error_info, const int error_size) {
     int result;
     string_t escaped;
     char *p;
 
-    if ((result=json_escape_string(input, &escaped,
-                    error_info, error_size)) != 0)
-    {
+    if ((result = json_escape_string(input, &escaped,
+                                     error_info, error_size)) != 0) {
         return result;
     }
 
@@ -370,8 +357,7 @@ static int json_quote_string(const string_t *input, char **buff,
 }
 
 int encode_json_array(json_array_t *array, string_t *output,
-        char *error_info, const int error_size)
-{
+                      char *error_info, const int error_size) {
     string_t *el;
     string_t *end;
     char *p;
@@ -380,11 +366,11 @@ int encode_json_array(json_array_t *array, string_t *output,
 
     end = array->elements + array->count;
     size = 3;
-    for (el=array->elements; el<end; el++) {
+    for (el = array->elements; el < end; el++) {
         size += 2 * el->len + 3;
     }
 
-    output->str = (char *)malloc(size);
+    output->str = (char *) malloc(size);
     if (output->str == NULL) {
         snprintf(error_info, error_size, "malloc %d bytes fail", size);
         return ENOMEM;
@@ -392,12 +378,12 @@ int encode_json_array(json_array_t *array, string_t *output,
 
     p = output->str;
     *p++ = '[';
-    for (el=array->elements; el<end; el++) {
+    for (el = array->elements; el < end; el++) {
         if (el > array->elements) {
             *p++ = ',';
         }
 
-        if ((result=json_quote_string(el, &p, error_info, error_size)) != 0) {
+        if ((result = json_quote_string(el, &p, error_info, error_size)) != 0) {
             free_json_string(output);
             return result;
         }
@@ -410,16 +396,14 @@ int encode_json_array(json_array_t *array, string_t *output,
 }
 
 int decode_json_map(const string_t *input, json_map_t *map,
-        char *error_info, const int error_size)
-{
+                    char *error_info, const int error_size) {
     ParseContext context;
     key_value_pair_t kv_pair;
     int result;
 
     map->element_size = sizeof(key_value_pair_t);
-    if ((result=prepare_json_parse(input, (common_array_t *)map,
-                    error_info, error_size, '{', '}', &context)) != 0)
-    {
+    if ((result = prepare_json_parse(input, (common_array_t *) map,
+                                     error_info, error_size, '{', '}', &context)) != 0) {
         return result;
     }
 
@@ -435,13 +419,13 @@ int decode_json_map(const string_t *input, json_map_t *map,
 
         if (*context.p == ',') {
             set_parse_error(input->str, context.p + 1,
-                    EXPECT_STR_LEN, "unexpect comma \",\"",
-                    error_info, error_size);
+                            EXPECT_STR_LEN, "unexpect comma \",\"",
+                            error_info, error_size);
             result = EINVAL;
             break;
         }
 
-        if ((result=next_json_element(&context)) != 0) {
+        if ((result = next_json_element(&context)) != 0) {
             break;
         }
         while (context.p < context.end && JSON_SPACE(*context.p)) {
@@ -449,8 +433,8 @@ int decode_json_map(const string_t *input, json_map_t *map,
         }
         if (!(context.p < context.end && *context.p == ':')) {
             set_parse_error(input->str, context.p,
-                    EXPECT_STR_LEN, "expect colon \":\"",
-                    error_info, error_size);
+                            EXPECT_STR_LEN, "expect colon \":\"",
+                            error_info, error_size);
             result = EINVAL;
             break;
         }
@@ -462,7 +446,7 @@ int decode_json_map(const string_t *input, json_map_t *map,
         while (context.p < context.end && JSON_SPACE(*context.p)) {
             context.p++;
         }
-        if ((result=next_json_element(&context)) != 0) {
+        if ((result = next_json_element(&context)) != 0) {
             break;
         }
         while (context.p < context.end && JSON_SPACE(*context.p)) {
@@ -473,8 +457,8 @@ int decode_json_map(const string_t *input, json_map_t *map,
                 context.p++;  //skip comma
             } else {
                 set_parse_error(input->str, context.p,
-                        EXPECT_STR_LEN, "expect comma \",\"",
-                        error_info, error_size);
+                                EXPECT_STR_LEN, "expect comma \",\"",
+                                error_info, error_size);
                 result = EINVAL;
                 break;
             }
@@ -483,7 +467,7 @@ int decode_json_map(const string_t *input, json_map_t *map,
         kv_pair.value = context.element;
         context.element.str += context.element.len + 1;
 
-        if ((result=check_alloc_json_map(map, error_info, error_size)) != 0) {
+        if ((result = check_alloc_json_map(map, error_info, error_size)) != 0) {
             map->count = 0;
             break;
         }
@@ -497,8 +481,7 @@ int decode_json_map(const string_t *input, json_map_t *map,
 }
 
 int encode_json_map(json_map_t *map, string_t *output,
-        char *error_info, const int error_size)
-{
+                    char *error_info, const int error_size) {
     key_value_pair_t *pair;
     key_value_pair_t *end;
     char *p;
@@ -507,11 +490,11 @@ int encode_json_map(json_map_t *map, string_t *output,
 
     end = map->elements + map->count;
     size = 3;
-    for (pair=map->elements; pair<end; pair++) {
+    for (pair = map->elements; pair < end; pair++) {
         size += 2 * (pair->key.len + pair->value.len + 2) + 1;
     }
 
-    output->str = (char *)malloc(size);
+    output->str = (char *) malloc(size);
     if (output->str == NULL) {
         snprintf(error_info, error_size, "malloc %d bytes fail", size);
         return ENOMEM;
@@ -519,21 +502,19 @@ int encode_json_map(json_map_t *map, string_t *output,
 
     p = output->str;
     *p++ = '{';
-    for (pair=map->elements; pair<end; pair++) {
+    for (pair = map->elements; pair < end; pair++) {
         if (pair > map->elements) {
             *p++ = ',';
         }
 
-        if ((result=json_quote_string(&pair->key, &p,
-                        error_info, error_size)) != 0)
-        {
+        if ((result = json_quote_string(&pair->key, &p,
+                                        error_info, error_size)) != 0) {
             free_json_string(output);
             return result;
         }
         *p++ = ':';
-        if ((result=json_quote_string(&pair->value, &p,
-                        error_info, error_size)) != 0)
-        {
+        if ((result = json_quote_string(&pair->value, &p,
+                                        error_info, error_size)) != 0) {
             free_json_string(output);
             return result;
         }

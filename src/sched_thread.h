@@ -16,34 +16,32 @@
 #include "fast_timer.h"
 #include "fast_mblock.h"
 
-typedef int (*TaskFunc) (void *args);
+typedef int (*TaskFunc)(void *args);
 
-typedef struct tagScheduleEntry
-{
-	uint32_t id;  //the task id
+typedef struct tagScheduleEntry {
+    uint32_t id;  //the task id
 
-	/* the time base to execute task, such as 00:00, interval is 3600,
+    /* the time base to execute task, such as 00:00, interval is 3600,
            means execute the task every hour as 1:00, 2:00, 3:00 etc. */
-	TimeInfo time_base;
+    TimeInfo time_base;
 
-	int interval;   //the interval for execute task, unit is second
+    int interval;   //the interval for execute task, unit is second
 
     bool new_thread;  //run in a new thread
 
     bool thread_running; //if new thread running, for internal use
 
-	TaskFunc task_func; //callback function
-	void *func_args;    //arguments pass to callback function
+    TaskFunc task_func; //callback function
+    void *func_args;    //arguments pass to callback function
 
-	/* following are internal fields, do not set manually! */
-	time_t next_call_time;  
-	struct tagScheduleEntry *next;
+    /* following are internal fields, do not set manually! */
+    time_t next_call_time;
+    struct tagScheduleEntry *next;
 } ScheduleEntry;
 
-typedef struct
-{
-	ScheduleEntry *entries;
-	int count;
+typedef struct {
+    ScheduleEntry *entries;
+    int count;
 } ScheduleArray;
 
 typedef struct fast_delay_task {
@@ -53,22 +51,20 @@ typedef struct fast_delay_task {
 
     bool thread_running; //if new thread running, for internal use
 
-	TaskFunc task_func; //callback function
-	void *func_args;    //arguments pass to callback function
+    TaskFunc task_func; //callback function
+    void *func_args;    //arguments pass to callback function
     struct fast_delay_task *next;
 } FastDelayTask;
 
-typedef struct
-{
+typedef struct {
     FastDelayTask *head;
     FastDelayTask *tail;
     pthread_mutex_t lock;
 } FastDelayQueue;
 
-typedef struct
-{
-	ScheduleArray scheduleArray;
-	ScheduleEntry *head;  //schedule chain head
+typedef struct {
+    ScheduleArray scheduleArray;
+    ScheduleEntry *head;  //schedule chain head
     ScheduleEntry *tail;  //schedule chain tail
 
     struct fast_mblock_man mblock;  //for timer entry
@@ -76,28 +72,28 @@ typedef struct
     bool timer_init;
     FastDelayQueue delay_queue;
 
-	bool *pcontinue_flag;
+    bool *pcontinue_flag;
 } ScheduleContext;
 
 #define INIT_SCHEDULE_ENTRY(schedule_entry, _id, _hour, _minute, _second, \
-	_interval,  _task_func, _func_args) \
-	(schedule_entry).id = _id; \
-	(schedule_entry).time_base.hour = _hour;     \
-	(schedule_entry).time_base.minute = _minute; \
-	(schedule_entry).time_base.second = _second; \
-	(schedule_entry).interval = _interval;   \
-	(schedule_entry).task_func = _task_func; \
-	(schedule_entry).new_thread = false;     \
-	(schedule_entry).func_args = _func_args
+    _interval, _task_func, _func_args) \
+    (schedule_entry).id = _id; \
+    (schedule_entry).time_base.hour = _hour;     \
+    (schedule_entry).time_base.minute = _minute; \
+    (schedule_entry).time_base.second = _second; \
+    (schedule_entry).interval = _interval;   \
+    (schedule_entry).task_func = _task_func; \
+    (schedule_entry).new_thread = false;     \
+    (schedule_entry).func_args = _func_args
 
 #define INIT_SCHEDULE_ENTRY_EX(schedule_entry, _id, _time_base, \
-	_interval,  _task_func, _func_args) \
-	(schedule_entry).id = _id; \
-	(schedule_entry).time_base = _time_base; \
-	(schedule_entry).interval = _interval;   \
-	(schedule_entry).task_func = _task_func; \
-	(schedule_entry).new_thread = false;     \
-	(schedule_entry).func_args = _func_args
+    _interval, _task_func, _func_args) \
+    (schedule_entry).id = _id; \
+    (schedule_entry).time_base = _time_base; \
+    (schedule_entry).interval = _interval;   \
+    (schedule_entry).task_func = _task_func; \
+    (schedule_entry).new_thread = false;     \
+    (schedule_entry).func_args = _func_args
 
 #ifdef __cplusplus
 extern "C" {
@@ -150,10 +146,10 @@ void sched_set_delay_params(const int slot_count, const int alloc_once);
  * return: error no, 0 for success, != 0 fail
 */
 int sched_add_delay_task_ex(ScheduleContext *pContext, TaskFunc task_func,
-        void *func_args, const int delay_seconds, const bool new_thread);
+                            void *func_args, const int delay_seconds, const bool new_thread);
 
 int sched_add_delay_task(TaskFunc task_func, void *func_args,
-        const int delay_seconds, const bool new_thread);
+                         const int delay_seconds, const bool new_thread);
 
 /** execute the schedule thread
  *  parameters:
@@ -165,11 +161,11 @@ int sched_add_delay_task(TaskFunc task_func, void *func_args,
  * return: error no, 0 for success, != 0 fail
 */
 int sched_start_ex(ScheduleArray *pScheduleArray, pthread_t *ptid,
-		const int stack_size, bool * volatile pcontinue_flag,
-        ScheduleContext **ppContext);
+                   const int stack_size, bool *volatile pcontinue_flag,
+                   ScheduleContext **ppContext);
 
 int sched_start(ScheduleArray *pScheduleArray, pthread_t *ptid, \
-		const int stack_size, bool * volatile pcontinue_flag);
+        const int stack_size, bool *volatile pcontinue_flag);
 
 
 /** print all schedule entries for debug

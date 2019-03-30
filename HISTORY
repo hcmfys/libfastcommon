@@ -76,7 +76,7 @@ Version 1.31  2016-11-26
   * add files: char_convert_loader.h and char_convert_loader.c
 
 Version 1.30  2016-10-31
-  * modify php-fastcommon/test.php
+  * modify php-../test.php
   * php7_ext_wrapper.h: fix memory leak in php 7
   * setsockopt SO_NOSIGPIPE when nessary
   * add function iovent_add_to_deleted_list

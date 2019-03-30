@@ -32,40 +32,37 @@ DEFINE_ARRAY_STRUCT(key_value_pair_t, json_map_t);
 extern "C" {
 #endif
 
-    void free_common_array(common_array_t *array);
+void free_common_array(common_array_t *array);
 
-    static inline void free_json_array(json_array_t *array)
-    {
-        free_common_array((common_array_t *)array);
+static inline void free_json_array(json_array_t *array) {
+    free_common_array((common_array_t *) array);
+}
+
+static inline void free_json_map(json_map_t *array) {
+    free_common_array((common_array_t *) array);
+}
+
+static inline void free_json_string(string_t *buffer) {
+    if (buffer->str != NULL) {
+        free(buffer->str);
+        buffer->str = NULL;
+        buffer->len = 0;
     }
+}
 
-    static inline void free_json_map(json_map_t *array)
-    {
-        free_common_array((common_array_t *)array);
-    }
+int detect_json_type(const string_t *input);
 
-    static inline void free_json_string(string_t *buffer)
-    {
-        if (buffer->str != NULL) {
-            free(buffer->str);
-            buffer->str = NULL;
-            buffer->len = 0;
-        }
-    }
+int decode_json_array(const string_t *input, json_array_t *array,
+                      char *error_info, const int error_size);
 
-    int detect_json_type(const string_t *input);
+int encode_json_array(json_array_t *array, string_t *output,
+                      char *error_info, const int error_size);
 
-    int decode_json_array(const string_t *input, json_array_t *array,
-            char *error_info, const int error_size);
+int decode_json_map(const string_t *input, json_map_t *map,
+                    char *error_info, const int error_size);
 
-    int encode_json_array(json_array_t *array, string_t *output,
-            char *error_info, const int error_size);
-
-    int decode_json_map(const string_t *input, json_map_t *map,
-            char *error_info, const int error_size);
-
-    int encode_json_map(json_map_t *map, string_t *output,
-            char *error_info, const int error_size);
+int encode_json_map(json_map_t *map, string_t *output,
+                    char *error_info, const int error_size);
 
 #ifdef __cplusplus
 }

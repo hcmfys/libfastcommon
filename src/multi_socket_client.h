@@ -34,7 +34,7 @@ typedef int (*fast_multi_sock_client_get_body_length_func)(const FastBuffer *rec
 
 //IO deal fucntion
 typedef int (*fast_multi_sock_client_io_func)(struct fast_multi_sock_client *client,
-         struct fast_multi_sock_entry *entry);
+                                              struct fast_multi_sock_entry *entry);
 
 typedef struct fast_multi_sock_entry {
     ConnectionInfo *conn;     //the socket must be non-block socket
@@ -63,38 +63,38 @@ extern "C" {
 #endif
 
 
-    /**
-      init function
-      @param client the client context
-      @param entries the socket entries
-      @param entry_count the count of socket entries
-      @param header_length the header length of a package
-      @param get_body_length_func the get body length function
-      @param init_recv_buffer_size the initial size of response buffer 
-      @param timeout the timeout in seconds
-      @return error no, 0 for success, != 0 fail
-      */
-    int fast_multi_sock_client_init(FastMultiSockClient *client,
-            FastMultiSockEntry *entries, const int entry_count,
-            const int header_length,
-            fast_multi_sock_client_get_body_length_func get_body_length_func,
-            const int init_recv_buffer_size, const int timeout);
+/**
+  init function
+  @param client the client context
+  @param entries the socket entries
+  @param entry_count the count of socket entries
+  @param header_length the header length of a package
+  @param get_body_length_func the get body length function
+  @param init_recv_buffer_size the initial size of response buffer
+  @param timeout the timeout in seconds
+  @return error no, 0 for success, != 0 fail
+  */
+int fast_multi_sock_client_init(FastMultiSockClient *client,
+                                FastMultiSockEntry *entries, const int entry_count,
+                                const int header_length,
+                                fast_multi_sock_client_get_body_length_func get_body_length_func,
+                                const int init_recv_buffer_size, const int timeout);
 
-    /**
-      destroy function
-      @param client the client context
-      @return none
-      */
-    void fast_multi_sock_client_destroy(FastMultiSockClient *client);
+/**
+  destroy function
+  @param client the client context
+  @return none
+  */
+void fast_multi_sock_client_destroy(FastMultiSockClient *client);
 
-    /**
-      request function
-      @param client the client context
-      @param send_buffer the buffer to send
-      @return error no, 0 for success, != 0 fail
-      */
-    int fast_multi_sock_client_request(FastMultiSockClient *client,
-            FastBuffer *send_buffer);
+/**
+  request function
+  @param client the client context
+  @param send_buffer the buffer to send
+  @return error no, 0 for success, != 0 fail
+  */
+int fast_multi_sock_client_request(FastMultiSockClient *client,
+                                   FastBuffer *send_buffer);
 
 #ifdef __cplusplus
 }

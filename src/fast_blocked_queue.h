@@ -18,12 +18,11 @@
 #include "common_define.h"
 #include "fast_task_queue.h"
 
-struct fast_blocked_queue
-{
-	struct fast_task_info *head;
-	struct fast_task_info *tail;
-	pthread_mutex_t lock;
-	pthread_cond_t cond;
+struct fast_blocked_queue {
+    struct fast_task_info *head;
+    struct fast_task_info *tail;
+    pthread_mutex_t lock;
+    pthread_cond_t cond;
 };
 
 #ifdef __cplusplus
@@ -31,25 +30,23 @@ extern "C" {
 #endif
 
 int blocked_queue_init(struct fast_blocked_queue *pQueue);
+
 void blocked_queue_destroy(struct fast_blocked_queue *pQueue);
 
-static inline void blocked_queue_terminate(struct fast_blocked_queue *pQueue)
-{
-     pthread_cond_signal(&(pQueue->cond));
+static inline void blocked_queue_terminate(struct fast_blocked_queue *pQueue) {
+    pthread_cond_signal(&(pQueue->cond));
 }
 
 static inline void blocked_queue_terminate_all(struct fast_blocked_queue *pQueue,
-        const int count)
-{
+                                               const int count) {
     int i;
-    for (i=0; i<count; i++)
-    {
+    for (i = 0; i < count; i++) {
         pthread_cond_signal(&(pQueue->cond));
     }
 }
 
 int blocked_queue_push(struct fast_blocked_queue *pQueue,
-		struct fast_task_info *pTask);
+                       struct fast_task_info *pTask);
 
 struct fast_task_info *blocked_queue_pop(struct fast_blocked_queue *pQueue);
 

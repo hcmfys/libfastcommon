@@ -24,24 +24,21 @@ extern "C" {
 #define FAST_CHAR_OP_ADD_BACKSLASH  1
 #define FAST_CHAR_OP_NO_BACKSLASH   2
 
-typedef struct fast_char_pair
-{
+typedef struct fast_char_pair {
     unsigned char src;
     unsigned char dest;
 } FastCharPair;
 
-typedef struct fast_char_target
-{
+typedef struct fast_char_target {
     unsigned char op;
     unsigned char dest;
 } FastCharTarget;
 
-typedef struct fast_char_converter
-{
+typedef struct fast_char_converter {
     /*
      * char pairs count
      * */
-    int  count;
+    int count;
 
     /*
      * char table to convert
@@ -59,8 +56,8 @@ typedef struct fast_char_converter
  *  return: 0 for success, != 0 fail
 */
 int char_converter_init_ex(FastCharConverter *pCharConverter,
-        const FastCharPair *charPairs, const int count,
-        const unsigned op);
+                           const FastCharPair *charPairs, const int count,
+                           const unsigned op);
 
 /**
  *  char converter init function
@@ -71,10 +68,9 @@ int char_converter_init_ex(FastCharConverter *pCharConverter,
  *  return: 0 for success, != 0 fail
 */
 static inline int char_converter_init(FastCharConverter *pCharConverter,
-        const FastCharPair *charPairs, const int count)
-{
+                                      const FastCharPair *charPairs, const int count) {
     return char_converter_init_ex(pCharConverter, charPairs, count,
-            FAST_CHAR_OP_NO_BACKSLASH);
+                                  FAST_CHAR_OP_NO_BACKSLASH);
 }
 
 /**
@@ -85,7 +81,7 @@ static inline int char_converter_init(FastCharConverter *pCharConverter,
  *  return: 0 for success, != 0 fail
 */
 int std_space_char_converter_init(FastCharConverter *pCharConverter,
-        const unsigned char dest_base);
+                                  const unsigned char dest_base);
 
 /**
  *  standard space chars init to add backslash
@@ -104,7 +100,7 @@ int std_spaces_add_backslash_converter_init(FastCharConverter *pCharConverter);
  *  return: none
 */
 void char_converter_set_pair(FastCharConverter *pCharConverter,
-        const unsigned char src, const unsigned char dest);
+                             const unsigned char src, const unsigned char dest);
 
 /**
  *  set char pair to converter
@@ -116,7 +112,7 @@ void char_converter_set_pair(FastCharConverter *pCharConverter,
  *  return: none
 */
 void char_converter_set_pair_ex(FastCharConverter *pCharConverter,
-        const unsigned char src, const unsigned op, const unsigned char dest);
+                                const unsigned char src, const unsigned op, const unsigned char dest);
 
 /**
  *  char convert function
@@ -130,8 +126,8 @@ void char_converter_set_pair_ex(FastCharConverter *pCharConverter,
  *  return: converted char count
 */
 int fast_char_convert(FastCharConverter *pCharConverter,
-        const char *input, const int input_len,
-        char *output, int *out_len, const int out_size);
+                      const char *input, const int input_len,
+                      char *output, int *out_len, const int out_size);
 
 #ifdef __cplusplus
 }

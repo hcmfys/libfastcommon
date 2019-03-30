@@ -26,14 +26,13 @@ typedef void (*callback)(void *);
  * 			uninstalling : uninstalling the thread pool.
  * 			uninstalled : uninstall the thread pool is over.
  */
-typedef enum threadpool_state
-{
-	uninitialized,
-	initializing,
-	initialized,
-	uninstalling,
-	uninstalled,
-}thread_state_t;
+typedef enum threadpool_state {
+    uninitialized,
+    initializing,
+    initialized,
+    uninstalling,
+    uninstalled,
+} thread_state_t;
 
 
 /*
@@ -45,14 +44,13 @@ typedef enum threadpool_state
  * 			func : the callback function for thread
  * 			arg : the callback parameter
  */
-typedef struct thread_info
-{
-	pthread_t id;
-	pthread_mutex_t mutex_locker;
-	pthread_cond_t run_locker;
-	callback func;
-	void *arg;
-}thread_info_t;
+typedef struct thread_info {
+    pthread_t id;
+    pthread_mutex_t mutex_locker;
+    pthread_cond_t run_locker;
+    callback func;
+    void *arg;
+} thread_info_t;
 
 /*
  * the structure for the thread pool
@@ -67,18 +65,17 @@ typedef struct thread_info
  *          current_size : the thread count for the current pool ;
  *          current_index : the busy thread in the  pool index.
  */
-typedef struct threadpool_info
-{
-	thread_info_t **list;
-	pthread_mutex_t mutex_locker;
-	pthread_cond_t run_locker;
-	pthread_cond_t full_locker;
-	pthread_cond_t empty_locker;
-	thread_state_t state;
-	int total_size;
-	int current_size;
-	int current_index;
-}threadpool_info_t;
+typedef struct threadpool_info {
+    thread_info_t **list;
+    pthread_mutex_t mutex_locker;
+    pthread_cond_t run_locker;
+    pthread_cond_t full_locker;
+    pthread_cond_t empty_locker;
+    thread_state_t state;
+    int total_size;
+    int current_size;
+    int current_index;
+} threadpool_info_t;
 
 #ifdef __cplusplus
 extern "C" {
@@ -106,7 +103,7 @@ int threadpool_init(int size);
  * 				-2 : malloc memory for thread is error;
  * 				-3 : create thread is error;
  */
-int threadpool_run(callback func,void *arg);
+int threadpool_run(callback func, void *arg);
 
 /*
  * free and destroy the thread pool memory

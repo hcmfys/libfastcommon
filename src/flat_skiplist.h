@@ -19,15 +19,13 @@
 #include "skiplist_common.h"
 #include "fast_mblock.h"
 
-typedef struct flat_skiplist_node
-{
+typedef struct flat_skiplist_node {
     void *data;
     struct flat_skiplist_node *prev;   //for stable sort
     struct flat_skiplist_node *links[0];
 } FlatSkiplistNode;
 
-typedef struct flat_skiplist
-{
+typedef struct flat_skiplist {
     int level_count;
     int top_level_index;
     skiplist_compare_func compare_func;
@@ -52,27 +50,30 @@ extern "C" {
     SKIPLIST_DEFAULT_MIN_ALLOC_ELEMENTS_ONCE)
 
 int flat_skiplist_init_ex(FlatSkiplist *sl, const int level_count,
-        skiplist_compare_func compare_func, skiplist_free_func free_func,
-        const int min_alloc_elements_once);
+                          skiplist_compare_func compare_func, skiplist_free_func free_func,
+                          const int min_alloc_elements_once);
 
 void flat_skiplist_destroy(FlatSkiplist *sl);
 
 int flat_skiplist_insert(FlatSkiplist *sl, void *data);
-int flat_skiplist_delete(FlatSkiplist *sl, void *data);
-int flat_skiplist_delete_all(FlatSkiplist *sl, void *data, int *delete_count);
-void *flat_skiplist_find(FlatSkiplist *sl, void *data);
-int flat_skiplist_find_all(FlatSkiplist *sl, void *data, FlatSkiplistIterator *iterator);
-int flat_skiplist_find_range(FlatSkiplist *sl, void *start_data, void *end_data,
-        FlatSkiplistIterator *iterator);
 
-static inline void flat_skiplist_iterator(FlatSkiplist *sl, FlatSkiplistIterator *iterator)
-{
+int flat_skiplist_delete(FlatSkiplist *sl, void *data);
+
+int flat_skiplist_delete_all(FlatSkiplist *sl, void *data, int *delete_count);
+
+void *flat_skiplist_find(FlatSkiplist *sl, void *data);
+
+int flat_skiplist_find_all(FlatSkiplist *sl, void *data, FlatSkiplistIterator *iterator);
+
+int flat_skiplist_find_range(FlatSkiplist *sl, void *start_data, void *end_data,
+                             FlatSkiplistIterator *iterator);
+
+static inline void flat_skiplist_iterator(FlatSkiplist *sl, FlatSkiplistIterator *iterator) {
     iterator->top = sl->top;
     iterator->current = sl->tail->prev;
 }
 
-static inline void *flat_skiplist_next(FlatSkiplistIterator *iterator)
-{
+static inline void *flat_skiplist_next(FlatSkiplistIterator *iterator) {
     void *data;
 
     if (iterator->current == iterator->top) {
@@ -84,21 +85,19 @@ static inline void *flat_skiplist_next(FlatSkiplistIterator *iterator)
     return data;
 }
 
-static inline bool flat_skiplist_empty(FlatSkiplist *sl)
-{
+static inline bool flat_skiplist_empty(FlatSkiplist *sl) {
     return sl->top->links[0] == sl->tail;
 }
 
-typedef const char * (*flat_skiplist_tostring_func)(void *data, char *buff, const int size);
+typedef const char *(*flat_skiplist_tostring_func)(void *data, char *buff, const int size);
 
-static inline void flat_skiplist_print(FlatSkiplist *sl, flat_skiplist_tostring_func tostring_func)
-{
+static inline void flat_skiplist_print(FlatSkiplist *sl, flat_skiplist_tostring_func tostring_func) {
     int i;
     FlatSkiplistNode *current;
     char buff[1024];
 
     printf("###################\n");
-    for (i=sl->top_level_index; i>=0; i--) {
+    for (i = sl->top_level_index; i >= 0; i--) {
         printf("level %d: ", i);
         current = sl->top->links[i];
         while (current != sl->tail) {

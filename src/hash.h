@@ -18,67 +18,64 @@ extern "C" {
 #endif
 
 #define CRC32_XINIT 0xFFFFFFFF      /* initial value */
-#define CRC32_XOROT 0xFFFFFFFF		/* final xor value */
+#define CRC32_XOROT 0xFFFFFFFF        /* final xor value */
 
-typedef int (*HashFunc) (const void *key, const int key_len);
+typedef int (*HashFunc)(const void *key, const int key_len);
 
 #ifdef HASH_STORE_HASH_CODE
 #define HASH_CODE(pHash, hash_data)   hash_data->hash_code
 #else
 #define HASH_CODE(pHash, hash_data)   ((unsigned int)pHash->hash_func( \
-					hash_data->key, hash_data->key_len))
+                    hash_data->key, hash_data->key_len))
 #endif
 
 #define CALC_NODE_MALLOC_BYTES(key_len, value_size) \
-		sizeof(HashData) + key_len + value_size
+        sizeof(HashData) + key_len + value_size
 
 #define FREE_HASH_DATA(pHash, hash_data) \
-	pHash->item_count--; \
-	pHash->bytes_used -= CALC_NODE_MALLOC_BYTES(hash_data->key_len, \
-				hash_data->malloc_value_size); \
-	free(hash_data);
+    pHash->item_count--; \
+    pHash->bytes_used -= CALC_NODE_MALLOC_BYTES(hash_data->key_len, \
+                hash_data->malloc_value_size); \
+    free(hash_data);
 
 
-typedef struct tagHashData
-{
-	int key_len;
-	int value_len;
-	int malloc_value_size;
+typedef struct tagHashData {
+    int key_len;
+    int value_len;
+    int malloc_value_size;
 
 #ifdef HASH_STORE_HASH_CODE
-	unsigned int hash_code;
+    unsigned int hash_code;
 #endif
 
-	char *value;
-	struct tagHashData *next;
-	char key[0];
+    char *value;
+    struct tagHashData *next;
+    char key[0];
 } HashData;
 
 typedef int64_t (*ConvertValueFunc)(const HashData *old_data, const int inc,
-	char *new_value, int *new_value_len, void *arg);
+                                    char *new_value, int *new_value_len, void *arg);
 
-typedef struct tagHashArray
-{
-	HashData **buckets;
-	HashFunc hash_func;
-	int item_count;
-	unsigned int *capacity;
-	double load_factor;
-	int64_t max_bytes;
-	int64_t bytes_used;
-	bool is_malloc_capacity;
-	bool is_malloc_value;
-	unsigned int lock_count;
-	pthread_mutex_t *locks;
+typedef struct tagHashArray {
+    HashData **buckets;
+    HashFunc hash_func;
+    int item_count;
+    unsigned int *capacity;
+    double load_factor;
+    int64_t max_bytes;
+    int64_t bytes_used;
+    bool is_malloc_capacity;
+    bool is_malloc_value;
+    unsigned int lock_count;
+    pthread_mutex_t *locks;
 } HashArray;
 
-typedef struct tagHashStat
-{
-	unsigned int capacity;
-	int item_count;
-	int bucket_used;
-	double bucket_avg_length;
-	int bucket_max_length;
+typedef struct tagHashStat {
+    unsigned int capacity;
+    int item_count;
+    int bucket_used;
+    double bucket_avg_length;
+    int bucket_max_length;
 } HashStat;
 
 /**
@@ -92,10 +89,10 @@ typedef struct tagHashStat
 typedef int (*HashWalkFunc)(const int index, const HashData *data, void *args);
 
 #define hash_init(pHash, hash_func, capacity, load_factor) \
-	hash_init_ex(pHash, hash_func, capacity, load_factor, 0, false)
+    hash_init_ex(pHash, hash_func, capacity, load_factor, 0, false)
 
 #define hash_insert(pHash, key, key_len, value) \
-	hash_insert_ex(pHash, key, key_len, value, 0, true)
+    hash_insert_ex(pHash, key, key_len, value, 0, true)
 
 /**
  * hash init function
@@ -109,8 +106,8 @@ typedef int (*HashWalkFunc)(const int index, const HashData *data, void *args);
  * return 0 for success, != 0 for error
 */
 int hash_init_ex(HashArray *pHash, HashFunc hash_func, \
-		const unsigned int capacity, const double load_factor, \
-		const int64_t max_bytes, const bool bMallocValue);
+        const unsigned int capacity, const double load_factor, \
+        const int64_t max_bytes, const bool bMallocValue);
 
 /**
  * set hash locks function
@@ -131,11 +128,11 @@ int hash_set_locks(HashArray *pHash, const int lock_count);
  * return the number after increasement
 */
 int64_t hash_inc_value(const HashData *old_data, const int inc,
-	char *new_value, int *new_value_len, void *arg);
+                       char *new_value, int *new_value_len, void *arg);
 
 #define hash_inc(pHash, key, key_len, inc, value, value_len) \
-	hash_inc_ex(pHash, key, key_len, inc, value, value_len, \
-		hash_inc_value, NULL)
+    hash_inc_ex(pHash, key, key_len, inc, value, value_len, \
+        hash_inc_value, NULL)
 
 /**
  * atomic increase value
@@ -151,9 +148,9 @@ int64_t hash_inc_value(const HashData *old_data, const int inc,
  * return  0 for success, != 0 for error (errno)
  *
 */
-int  hash_inc_ex(HashArray *pHash, const void *key, const int key_len,
-		const int inc, char *value, int *value_len,
-		ConvertValueFunc convert_func, void *arg);
+int hash_inc_ex(HashArray *pHash, const void *key, const int key_len,
+                const int inc, char *value, int *value_len,
+                ConvertValueFunc convert_func, void *arg);
 
 /**
  * hash destroy function
@@ -176,7 +173,7 @@ void hash_destroy(HashArray *pHash);
  *        1 for new key (insert), < 0 for error
 */
 int hash_insert_ex(HashArray *pHash, const void *key, const int key_len, \
-		void *value, const int value_len, const bool needLock);
+        void *value, const int value_len, const bool needLock);
 
 /**
  * hash find key
@@ -205,8 +202,7 @@ HashData *hash_find_ex(HashArray *pHash, const void *key, const int key_len);
  *         key: the key to find
  * return user data, return NULL when the key not exist
 */
-static inline void *hash_find1(HashArray *pHash, const string_t *key)
-{
+static inline void *hash_find1(HashArray *pHash, const string_t *key) {
     return hash_find(pHash, key->str, key->len);
 }
 
@@ -241,7 +237,7 @@ HashData *hash_find1_ex(HashArray *pHash, const string_t *key);
  * return 0 for success, != 0 fail (errno)
 */
 int hash_get(HashArray *pHash, const void *key, const int key_len,
-	void *value, int *value_len);
+             void *value, int *value_len);
 
 
 /**
@@ -256,7 +252,7 @@ int hash_get(HashArray *pHash, const void *key, const int key_len,
  * return 0 for success, != 0 fail (errno)
 */
 int hash_partial_set(HashArray *pHash, const void *key, const int key_len,
-		const char *value, const int offset, const int value_len);
+                     const char *value, const int offset, const int value_len);
 
 /**
  * hash delete key
@@ -308,7 +304,7 @@ int hash_best_op(HashArray *pHash, const int suggest_capacity);
  * return 0 for success, != 0 fail (errno)
 */
 int hash_stat(HashArray *pHash, HashStat *pStat, \
-		int *stat_by_lens, const int stat_size);
+        int *stat_by_lens, const int stat_size);
 
 /**
  * print hash stat info
@@ -339,68 +335,79 @@ int hash_bucket_unlock(HashArray *pHash, const unsigned int bucket_index);
 int RSHash(const void *key, const int key_len);
 
 int JSHash(const void *key, const int key_len);
+
 int JSHash_ex(const void *key, const int key_len, \
-	const int init_value);
+    const int init_value);
 
 int PJWHash(const void *key, const int key_len);
+
 int PJWHash_ex(const void *key, const int key_len, \
-	const int init_value);
+    const int init_value);
 
 int ELFHash(const void *key, const int key_len);
+
 int ELFHash_ex(const void *key, const int key_len, \
-	const int init_value);
+    const int init_value);
 
 int BKDRHash(const void *key, const int key_len);
+
 int BKDRHash_ex(const void *key, const int key_len, \
-	const int init_value);
+    const int init_value);
 
 int SDBMHash(const void *key, const int key_len);
+
 int SDBMHash_ex(const void *key, const int key_len, \
-	const int init_value);
+    const int init_value);
 
 int Time33Hash(const void *key, const int key_len);
+
 int Time33Hash_ex(const void *key, const int key_len, \
-	const int init_value);
+    const int init_value);
 
 int DJBHash(const void *key, const int key_len);
+
 int DJBHash_ex(const void *key, const int key_len, \
-	const int init_value);
+    const int init_value);
 
 int APHash(const void *key, const int key_len);
+
 int APHash_ex(const void *key, const int key_len, \
-	const int init_value);
+    const int init_value);
 
-int calc_hashnr (const void* key, const int key_len);
+int calc_hashnr(const void *key, const int key_len);
 
-int calc_hashnr1(const void* key, const int key_len);
-int calc_hashnr1_ex(const void* key, const int key_len, \
-	const int init_value);
+int calc_hashnr1(const void *key, const int key_len);
 
-int simple_hash(const void* key, const int key_len);
-int simple_hash_ex(const void* key, const int key_len, \
-	const int init_value);
+int calc_hashnr1_ex(const void *key, const int key_len, \
+    const int init_value);
+
+int simple_hash(const void *key, const int key_len);
+
+int simple_hash_ex(const void *key, const int key_len, \
+    const int init_value);
 
 int CRC32(const void *key, const int key_len);
+
 int64_t CRC32_ex(const void *key, const int key_len, \
-	const int64_t init_value);
+    const int64_t init_value);
 
 #define CRC32_FINAL(crc)  (crc ^ CRC32_XOROT)
 
 #define INIT_HASH_CODES4(hash_codes) \
-	hash_codes[0] = CRC32_XINIT; \
-	hash_codes[1] = 0; \
-	hash_codes[2] = 0; \
-	hash_codes[3] = 0; \
+    hash_codes[0] = CRC32_XINIT; \
+    hash_codes[1] = 0; \
+    hash_codes[2] = 0; \
+    hash_codes[3] = 0; \
 
 #define CALC_HASH_CODES4(buff, buff_len, hash_codes) \
-	hash_codes[0] = CRC32_ex(buff, buff_len, hash_codes[0]); \
-	hash_codes[1] = ELFHash_ex(buff, buff_len, hash_codes[1]); \
-	hash_codes[2] = simple_hash_ex(buff, buff_len, hash_codes[2]); \
-	hash_codes[3] = Time33Hash_ex(buff, buff_len, hash_codes[3]); \
+    hash_codes[0] = CRC32_ex(buff, buff_len, hash_codes[0]); \
+    hash_codes[1] = ELFHash_ex(buff, buff_len, hash_codes[1]); \
+    hash_codes[2] = simple_hash_ex(buff, buff_len, hash_codes[2]); \
+    hash_codes[3] = Time33Hash_ex(buff, buff_len, hash_codes[3]); \
 
 
 #define FINISH_HASH_CODES4(hash_codes) \
-	hash_codes[0] = CRC32_FINAL(hash_codes[0]); \
+    hash_codes[0] = CRC32_FINAL(hash_codes[0]); \
 
 
 unsigned int *hash_get_prime_capacity(const int capacity);

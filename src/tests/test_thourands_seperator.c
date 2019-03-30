@@ -1,14 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <math.h>
-#include <time.h>
-#include <inttypes.h>
-#include <sys/time.h>
-#include "fastcommon/shared_func.h"
+#include "../shared_func.h"
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
     int64_t n;
     char buff[32];
 

@@ -34,22 +34,26 @@ typedef DWORD (WINAPI *ThreadEntranceFunc)(LPVOID lpThreadParameter);
 #include <arpa/inet.h>
 #include <sys/types.h>
 #include <sys/socket.h>
-#define FILE_SEPERATOR	"/"
+
+#define FILE_SEPERATOR    "/"
 typedef int SOCKET;
 #define closesocket     close
 #define INVALID_SOCKET  -1
 #define THREAD_ENTRANCE_FUNC_DECLARE  void *
 typedef void *LPVOID;
-#define THREAD_RETURN_VALUE	 NULL
-typedef void * (*ThreadEntranceFunc)(LPVOID lpThreadParameter);
+#define THREAD_RETURN_VALUE     NULL
+
+typedef void *(*ThreadEntranceFunc)(LPVOID lpThreadParameter);
 
 #endif
 
 #ifndef WIN32
+
 extern int pthread_mutexattr_settype(pthread_mutexattr_t *attr, int kind);
+
 #endif
 
-#include "_os_define.h"
+//#include "_os_define.h"
 
 #ifdef OS_LINUX
 #ifndef PTHREAD_MUTEX_ERRORCHECK
@@ -58,23 +62,23 @@ extern int pthread_mutexattr_settype(pthread_mutexattr_t *attr, int kind);
 #endif
 
 #ifdef OS_BITS
-  #if OS_BITS == 64
-    #define INT64_PRINTF_FORMAT   "%ld"
-  #else
-    #define INT64_PRINTF_FORMAT   "%lld"
-  #endif
+#if OS_BITS == 64
+#define INT64_PRINTF_FORMAT   "%ld"
 #else
-  #define INT64_PRINTF_FORMAT   "%lld"
+#define INT64_PRINTF_FORMAT   "%lld"
+#endif
+#else
+#define INT64_PRINTF_FORMAT   "%lld"
 #endif
 
 #ifdef OFF_BITS
-  #if OFF_BITS == 64
-    #define OFF_PRINTF_FORMAT   INT64_PRINTF_FORMAT
-  #else
-    #define OFF_PRINTF_FORMAT   "%d"
-  #endif
+#if OFF_BITS == 64
+#define OFF_PRINTF_FORMAT   INT64_PRINTF_FORMAT
 #else
-  #define OFF_PRINTF_FORMAT   INT64_PRINTF_FORMAT
+#define OFF_PRINTF_FORMAT   "%d"
+#endif
+#else
+#define OFF_PRINTF_FORMAT   INT64_PRINTF_FORMAT
 #endif
 
 #ifndef WIN32
@@ -82,16 +86,16 @@ extern int pthread_mutexattr_settype(pthread_mutexattr_t *attr, int kind);
 #endif
 
 #define MAX_PATH_SIZE                  256
-#define LOG_FILE_DIR				"logs"
-#define CONF_FILE_DIR				"conf"
-#define DEFAULT_CONNECT_TIMEOUT			10
-#define DEFAULT_NETWORK_TIMEOUT			30
+#define LOG_FILE_DIR                "logs"
+#define CONF_FILE_DIR                "conf"
+#define DEFAULT_CONNECT_TIMEOUT            10
+#define DEFAULT_NETWORK_TIMEOUT            30
 #define DEFAULT_MAX_CONNECTONS        1024
 #define DEFAULT_WORK_THREADS             4
 #define SYNC_LOG_BUFF_DEF_INTERVAL      10
 #define TIME_NONE                       -1
 
-#define IP_ADDRESS_SIZE	16
+#define IP_ADDRESS_SIZE    16
 #define INFINITE_FILE_SIZE (256 * 1024LL * 1024 * 1024 * 1024 * 1024LL)
 
 #ifndef byte
@@ -141,68 +145,61 @@ extern int pthread_mutexattr_settype(pthread_mutexattr_t *attr, int kind);
 extern "C" {
 #endif
 
-typedef struct
-{
-	byte hour;
-	byte minute;
-	byte second;
+typedef struct {
+    byte hour;
+    byte minute;
+    byte second;
 } TimeInfo;
 
-typedef struct
-{
-	char major;
-	char minor;
+typedef struct {
+    char major;
+    char minor;
     char patch;
 } Version;
 
-typedef struct
-{
-	char *key;
-	char *value;
+typedef struct {
+    char *key;
+    char *value;
 } KeyValuePair;
 
-typedef struct
-{
-	char *key;
-	char *value;
+typedef struct {
+    char *key;
+    char *value;
     int key_len;
     int value_len;
 } KeyValuePairEx;
 
-typedef struct
-{
-	char *buff;
-	int alloc_size;
-	int length;
+typedef struct {
+    char *buff;
+    int alloc_size;
+    int length;
 } BufferInfo;
 
-typedef struct
-{
+typedef struct {
     char *str;
     int len;
 } string_t;
 
-typedef struct
-{
+typedef struct {
     string_t *strings;
     int count;
 } string_array_t;
 
-typedef struct
-{
+typedef struct {
     string_t key;
     string_t value;
 } key_value_pair_t;
 
-typedef struct
-{
+typedef struct {
     key_value_pair_t *kv_pairs;
     int count;
 } key_value_array_t;
 
 typedef void (*FreeDataFunc)(void *ptr);
+
 typedef int (*CompareFunc)(void *p1, void *p2);
-typedef void* (*MallocFunc)(size_t size);
+
+typedef void *(*MallocFunc)(size_t size);
 
 #define TO_UPPERCASE(c)  (((c) >= 'a' && (c) <= 'z') ? (c) - 32 : c)
 #define MEM_ALIGN(x)  (((x) + 7) & (~7))
@@ -213,7 +210,7 @@ typedef void* (*MallocFunc)(size_t size);
 
 #ifndef likely
 
-#if defined(__GNUC__) &&  __GNUC__ >= 3
+#if defined(__GNUC__) && __GNUC__ >= 3
 #define likely(cond)   __builtin_expect ((cond), 1)
 #define unlikely(cond) __builtin_expect ((cond), 0)
 #else
@@ -224,9 +221,9 @@ typedef void* (*MallocFunc)(size_t size);
 #endif
 
 #ifdef __GNUC__
-  #define __gcc_attribute__ __attribute__
+#define __gcc_attribute__ __attribute__
 #else
-  #define __gcc_attribute__(x)
+#define __gcc_attribute__(x)
 #endif
 
 #define FC_IS_CHINESE_UTF8_CHAR(p, end) \
@@ -261,8 +258,7 @@ typedef void* (*MallocFunc)(size_t size);
 
 #define fc_compare_string(s1, s2) fc_string_compare(s1, s2)
 
-static inline int fc_string_compare(const string_t *s1, const string_t *s2)
-{
+static inline int fc_string_compare(const string_t *s1, const string_t *s2) {
     int result;
     if (s1->len == s2->len) {
         return memcmp(s1->str, s2->str, s1->len);
@@ -275,14 +271,12 @@ static inline int fc_string_compare(const string_t *s1, const string_t *s2)
     }
 }
 
-static inline bool fc_string_equal(const string_t *s1, const string_t *s2)
-{
+static inline bool fc_string_equal(const string_t *s1, const string_t *s2) {
     return (s1->len == s2->len) && (memcmp(s1->str, s2->str, s1->len) == 0);
 }
 
 static inline bool fc_string_equal2(const string_t *s1,
-        const char *str2, const int len2)
-{
+                                    const char *str2, const int len2) {
     return (s1->len == len2) && (memcmp(s1->str, str2, s1->len) == 0);
 }
 

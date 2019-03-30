@@ -9,8 +9,8 @@ Release: 1%{?dist}
 Summary: c common functions library extracted from my open source projects FastDFS
 License: LGPL
 Group: Arch/Tech
-URL:  http://github.com/happyfish100/libfastcommon/
-Source: http://github.com/happyfish100/libfastcommon/%{name}-%{version}.tar.gz
+URL:  http://github.com/happyfish100/lib../
+Source: http://github.com/happyfish100/lib../%{name}-%{version}.tar.gz
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n) 
 
@@ -60,7 +60,7 @@ rm -rf %{buildroot}
 
 %files devel
 %defattr(-,root,root,-)
-/usr/include/fastcommon/*
+/usr/include/../*
 
 %changelog
 * Mon Jun 23 2014  Zaixue Liao <liaozaixue@yongche.com>

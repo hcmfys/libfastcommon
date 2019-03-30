@@ -29,7 +29,7 @@ extern "C" {
  *  return: 0 for success, != 0 fail
 */
 int char_convert_loader_init(FastCharConverter *pCharConverter,
-        const IniItem *items, const int count);
+                             const IniItem *items, const int count);
 
 /**
  *  char converter init function
@@ -40,7 +40,7 @@ int char_convert_loader_init(FastCharConverter *pCharConverter,
  *  return: 0 for success, != 0 fail
 */
 int char_convert_loader_add(FastCharConverter *pCharConverter,
-        const IniItem *items, const int count);
+                            const IniItem *items, const int count);
 
 /**
  *  set char src and dest pair
@@ -62,7 +62,7 @@ int char_convert_loader_add(FastCharConverter *pCharConverter,
  *  return: 0 for success, != 0 fail
 */
 int char_convert_loader_set_pair(FastCharConverter *pCharConverter,
-        const char *src, const char *dest);
+                                 const char *src, const char *dest);
 
 #ifdef __cplusplus
 }

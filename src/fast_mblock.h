@@ -23,9 +23,8 @@
 #define FAST_MBLOCK_ORDER_BY_ALLOC_BYTES    1
 #define FAST_MBLOCK_ORDER_BY_ELEMENT_SIZE   2
 
-/* free node chain */ 
-struct fast_mblock_node
-{
+/* free node chain */
+struct fast_mblock_node {
     struct fast_mblock_node *next;
     int offset;    //trunk offset
     int recycle_timestamp;
@@ -33,28 +32,26 @@ struct fast_mblock_node
 };
 
 /* malloc chain */
-struct fast_mblock_malloc
-{
+struct fast_mblock_malloc {
     int64_t ref_count;  //refference count
     struct fast_mblock_malloc *prev;
     struct fast_mblock_malloc *next;
 };
 
 struct fast_mblock_chain {
-	struct fast_mblock_node *head;
-	struct fast_mblock_node *tail;
+    struct fast_mblock_node *head;
+    struct fast_mblock_node *tail;
 };
 
 typedef int (*fast_mblock_alloc_init_func)(void *element);
 
 typedef int (*fast_mblock_malloc_trunk_check_func)(
-	const int alloc_bytes, void *args);
+        const int alloc_bytes, void *args);
 
 typedef void (*fast_mblock_malloc_trunk_notify_func)(
-	const int alloc_bytes, void *args);
+        const int alloc_bytes, void *args);
 
-struct fast_mblock_info
-{
+struct fast_mblock_info {
     char name[FAST_MBLOCK_NAME_SIZE];
     int element_size;         //element size
     int element_total_count;  //total element count
@@ -65,20 +62,17 @@ struct fast_mblock_info
     int instance_count;       //instance count
 };
 
-struct fast_mblock_trunks
-{
-	struct fast_mblock_malloc head; //malloc chain to be freed
+struct fast_mblock_trunks {
+    struct fast_mblock_malloc head; //malloc chain to be freed
 };
 
-struct fast_mblock_malloc_trunk_callback
-{
+struct fast_mblock_malloc_trunk_callback {
     fast_mblock_malloc_trunk_check_func check_func;
     fast_mblock_malloc_trunk_notify_func notify_func;
     void *args;
 };
 
-struct fast_mblock_man
-{
+struct fast_mblock_man {
     struct fast_mblock_info info;
     int alloc_elements_once;  //alloc elements once
     struct fast_mblock_node *free_chain_head;    //free node chain
@@ -95,7 +89,7 @@ struct fast_mblock_man
 };
 
 #define  GET_BLOCK_SIZE(info) \
-	(MEM_ALIGN(sizeof(struct fast_mblock_node) + (info).element_size))
+    (MEM_ALIGN(sizeof(struct fast_mblock_node) + (info).element_size))
 
 #define fast_mblock_get_block_size(mblock) GET_BLOCK_SIZE(mblock->info)
 
@@ -121,8 +115,8 @@ parameters:
 return error no, 0 for success, != 0 fail
 */
 int fast_mblock_init_ex(struct fast_mblock_man *mblock,
-        const int element_size, const int alloc_elements_once,
-        fast_mblock_alloc_init_func init_func, const bool need_lock);
+                        const int element_size, const int alloc_elements_once,
+                        fast_mblock_alloc_init_func init_func, const bool need_lock);
 
 /**
 mblock init
@@ -139,11 +133,11 @@ parameters:
 return error no, 0 for success, != 0 fail
 */
 int fast_mblock_init_ex2(struct fast_mblock_man *mblock, const char *name,
-        const int element_size, const int alloc_elements_once,
-        fast_mblock_alloc_init_func init_func, const bool need_lock,
-        fast_mblock_malloc_trunk_check_func malloc_trunk_check,
-        fast_mblock_malloc_trunk_notify_func malloc_trunk_notify,
-        void *malloc_trunk_args);
+                         const int element_size, const int alloc_elements_once,
+                         fast_mblock_alloc_init_func init_func, const bool need_lock,
+                         fast_mblock_malloc_trunk_check_func malloc_trunk_check,
+                         fast_mblock_malloc_trunk_notify_func malloc_trunk_notify,
+                         void *malloc_trunk_args);
 
 /**
 mblock init
@@ -157,11 +151,10 @@ parameters:
 return error no, 0 for success, != 0 fail
 */
 static inline int fast_mblock_init_ex1(struct fast_mblock_man *mblock,
-        const char *name, const int element_size, const int alloc_elements_once,
-        fast_mblock_alloc_init_func init_func, const bool need_lock)
-{
+                                       const char *name, const int element_size, const int alloc_elements_once,
+                                       fast_mblock_alloc_init_func init_func, const bool need_lock) {
     return fast_mblock_init_ex2(mblock, name, element_size,
-            alloc_elements_once, init_func, need_lock, NULL, NULL, NULL);
+                                alloc_elements_once, init_func, need_lock, NULL, NULL, NULL);
 }
 
 /**
@@ -187,7 +180,7 @@ parameters:
 return 0 for success, return none zero if fail
 */
 int fast_mblock_free(struct fast_mblock_man *mblock,
-		     struct fast_mblock_node *pNode);
+                     struct fast_mblock_node *pNode);
 
 /**
 delay free a node (put a node to the mblock)
@@ -198,7 +191,7 @@ parameters:
 return 0 for success, return none zero if fail
 */
 int fast_mblock_delay_free(struct fast_mblock_man *mblock,
-		     struct fast_mblock_node *pNode, const int delay);
+                           struct fast_mblock_node *pNode, const int delay);
 
 /**
 alloc a object from the mblock
@@ -206,12 +199,10 @@ parameters:
 	mblock: the mblock pointer
 return the alloced object, return NULL if fail
 */
-static inline void *fast_mblock_alloc_object(struct fast_mblock_man *mblock)
-{
+static inline void *fast_mblock_alloc_object(struct fast_mblock_man *mblock) {
     struct fast_mblock_node *node;
     node = fast_mblock_alloc(mblock);
-    if (node == NULL)
-    {
+    if (node == NULL) {
         return NULL;
     }
     return node->data;
@@ -225,8 +216,7 @@ parameters:
 return 0 for success, return none zero if fail
 */
 static inline int fast_mblock_free_object(struct fast_mblock_man *mblock,
-        void *object)
-{
+                                          void *object) {
     return fast_mblock_free(mblock, fast_mblock_to_node_ptr(object));
 }
 
@@ -239,8 +229,7 @@ parameters:
 return 0 for success, return none zero if fail
 */
 static inline int fast_mblock_delay_free_object(struct fast_mblock_man *mblock,
-        void *object, const int delay)
-{
+                                                void *object, const int delay) {
     return fast_mblock_delay_free(mblock, fast_mblock_to_node_ptr(object), delay);
 }
 
@@ -278,7 +267,7 @@ parameters:
 return error no, 0 for success, != 0 fail
 */
 int fast_mblock_manager_stat(struct fast_mblock_info *stats,
-        const int size, int *count);
+                             const int size, int *count);
 
 
 /**
@@ -294,7 +283,7 @@ int fast_mblock_manager_stat_print_ex(const bool hide_empty, const int order_by)
         fast_mblock_manager_stat_print_ex(hide_empty, FAST_MBLOCK_ORDER_BY_ALLOC_BYTES)
 
 typedef void (*fast_mblock_free_trunks_func)(struct fast_mblock_man *mblock,
-        struct fast_mblock_malloc *freelist);
+                                             struct fast_mblock_malloc *freelist);
 
 /**
 free the trunks
@@ -304,7 +293,7 @@ parameters:
 return error no, 0 for success, != 0 fail
 */
 void fast_mblock_free_trunks(struct fast_mblock_man *mblock,
-        struct fast_mblock_malloc *freelist);
+                             struct fast_mblock_malloc *freelist);
 
 /**
 reclaim the free trunks of the mblock
@@ -316,8 +305,8 @@ parameters:
 return error no, 0 for success, != 0 fail
 */
 int fast_mblock_reclaim(struct fast_mblock_man *mblock,
-        const int reclaim_target, int *reclaim_count,
-        fast_mblock_free_trunks_func free_trunks_func);
+                        const int reclaim_target, int *reclaim_count,
+                        fast_mblock_free_trunks_func free_trunks_func);
 
 #ifdef __cplusplus
 }

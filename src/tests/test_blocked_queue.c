@@ -1,16 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <math.h>
 #include <time.h>
 #include <inttypes.h>
-#include <sys/time.h>
-#include "fastcommon/logger.h"
-#include "fastcommon/shared_func.h"
-#include "fastcommon/sched_thread.h"
-#include "fastcommon/ini_file_reader.h"
-#include "fastcommon/fast_task_queue.h"
-#include "fastcommon/fast_blocked_queue.h"
+#include "../logger.h"
+#include "../shared_func.h"
+#include "../sched_thread.h"
+#include "../ini_file_reader.h"
+#include "../fast_task_queue.h"
+#include "../fast_blocked_queue.h"
 
 static bool g_continue_flag = true;
 static int64_t produce_count = 0;
@@ -19,14 +17,13 @@ static struct fast_blocked_queue blocked_queue;
 
 #define MAX_USLEEP 10000
 
-void *producer_thread(void *arg)
-{
+void *producer_thread(void *arg) {
     int usleep_time;
     int64_t count;
     struct fast_task_info *pTask;
 
     while (g_continue_flag) {
-        usleep_time = (int64_t) MAX_USLEEP * (int64_t)rand() / RAND_MAX;
+        usleep_time = (int64_t) MAX_USLEEP * (int64_t) rand() / RAND_MAX;
         if (usleep_time > 0) {
             usleep(usleep_time);
         }
@@ -45,8 +42,7 @@ void *producer_thread(void *arg)
     return NULL;
 }
 
-static void sigQuitHandler(int sig)
-{
+static void sigQuitHandler(int sig) {
     g_continue_flag = false;
     blocked_queue_terminate(&blocked_queue);
 
@@ -55,8 +51,7 @@ static void sigQuitHandler(int sig)
             __LINE__, sig);
 }
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
     pthread_t tid;
     struct sigaction act;
     const int min_buff_size = 1024;
@@ -73,10 +68,9 @@ int main(int argc, char *argv[])
     memset(&act, 0, sizeof(act));
     sigemptyset(&act.sa_mask);
     act.sa_handler = sigQuitHandler;
-    if(sigaction(SIGINT, &act, NULL) < 0 ||
-            sigaction(SIGTERM, &act, NULL) < 0 ||
-            sigaction(SIGQUIT, &act, NULL) < 0)
-    {
+    if (sigaction(SIGINT, &act, NULL) < 0 ||
+        sigaction(SIGTERM, &act, NULL) < 0 ||
+        sigaction(SIGQUIT, &act, NULL) < 0) {
         logCrit("file: "__FILE__", line: %d, " \
                 "call sigaction fail, errno: %d, error info: %s", \
                 __LINE__, errno, STRERROR(errno));
@@ -90,7 +84,7 @@ int main(int argc, char *argv[])
         return result;
     }
 
-    if ((result=blocked_queue_init(&blocked_queue)) != 0) {
+    if ((result = blocked_queue_init(&blocked_queue)) != 0) {
         return result;
     }
 

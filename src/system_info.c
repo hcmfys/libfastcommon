@@ -9,19 +9,8 @@
 #include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
-#include <unistd.h>
-#include <signal.h>
-#include <inttypes.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <netinet/in.h>
-#include <fcntl.h>
 #include <errno.h>
-#include <dirent.h>
 #include "logger.h"
-#include "shared_func.h"
 #include "system_info.h"
 
 #ifdef OS_LINUX
@@ -43,51 +32,49 @@
 #endif
 #endif
 
-int get_sys_total_mem_size(int64_t *mem_size)
-{
+int get_sys_total_mem_size(int64_t *mem_size) {
 #ifdef OS_LINUX
     struct sysinfo si;
     if (sysinfo(&si) != 0)
     {
-		logError("file: "__FILE__", line: %d, " \
-			 "call sysinfo fail, " \
-			 "errno: %d, error info: %s", \
-			 __LINE__, errno, STRERROR(errno));
-		return errno != 0 ? errno : EPERM;
+        logError("file: "__FILE__", line: %d, " \
+             "call sysinfo fail, " \
+             "errno: %d, error info: %s", \
+             __LINE__, errno, STRERROR(errno));
+        return errno != 0 ? errno : EPERM;
     }
     *mem_size = si.totalram;
     return 0;
 #elif defined(OS_FREEBSD)
-   int mib[2];
-   size_t len;
+    int mib[2];
+    size_t len;
 
-   mib[0] = CTL_HW;
-   mib[1] = HW_MEMSIZE;
-   len = sizeof(*mem_size);
-   if (sysctl(mib, 2, mem_size, &len, NULL, 0) != 0)
-   {
-		logError("file: "__FILE__", line: %d, " \
-			 "call sysctl  fail, " \
-			 "errno: %d, error info: %s", \
-			 __LINE__, errno, STRERROR(errno));
-		return errno != 0 ? errno : EPERM;
-   }
-   return 0;
+    mib[0] = CTL_HW;
+    mib[1] = HW_MEMSIZE;
+    len = sizeof(*mem_size);
+    if (sysctl(mib, 2, mem_size, &len, NULL, 0) != 0)
+    {
+         logError("file: "__FILE__", line: %d, " \
+              "call sysctl  fail, " \
+              "errno: %d, error info: %s", \
+              __LINE__, errno, STRERROR(errno));
+         return errno != 0 ? errno : EPERM;
+    }
+    return 0;
 #else
-   *mem_size = 0;
-   logError("file: "__FILE__", line: %d, "
-           "please port me!", __LINE__);
-   return EOPNOTSUPP;
+    *mem_size = 0;
+    logError("file: "__FILE__", line: %d, "
+             "please port me!", __LINE__);
+    return EOPNOTSUPP;
 #endif
 }
 
-int get_sys_cpu_count()
-{
+int get_sys_cpu_count() {
 #if defined(OS_LINUX) || defined(OS_FREEBSD)
     return sysconf(_SC_NPROCESSORS_ONLN);
 #else
     logError("file: "__FILE__", line: %d, "
-            "please port me!", __LINE__);
+             "please port me!", __LINE__);
     return 0;
 #endif
 }
@@ -101,8 +88,7 @@ int get_sys_cpu_count()
         (tv).tv_usec = (secs - (tv).tv_sec) * 1000000; \
     } while (0)
 
-int get_boot_time(struct timeval *boot_time)
-{
+int get_boot_time(struct timeval *boot_time) {
 #ifdef OS_LINUX
     char buff[256];
     int64_t bytes;
@@ -152,17 +138,17 @@ int get_boot_time(struct timeval *boot_time)
     {
         boot_time->tv_sec = 0;
         boot_time->tv_usec = 0;
-		logError("file: "__FILE__", line: %d, "
-			 "call sysctl  fail, "
-			 "errno: %d, error info: %s",
-			 __LINE__, errno, STRERROR(errno));
-		return errno != 0 ? errno : EPERM;
+        logError("file: "__FILE__", line: %d, "
+             "call sysctl  fail, "
+             "errno: %d, error info: %s",
+             __LINE__, errno, STRERROR(errno));
+        return errno != 0 ? errno : EPERM;
     }
 #else
     boot_time->tv_sec = 0;
     boot_time->tv_usec = 0;
     logError("file: "__FILE__", line: %d, "
-            "please port me!", __LINE__);
+             "please port me!", __LINE__);
     return EOPNOTSUPP;
 #endif
 }
@@ -186,8 +172,7 @@ int get_boot_time(struct timeval *boot_time)
     } while (0)
 
 int get_mounted_filesystems(struct fast_statfs *stats,
-        const int size, int *count)
-{
+                            const int size, int *count) {
 #ifdef OS_LINUX
     const char *filename = "/proc/mounts";
     FILE *fp;
@@ -205,11 +190,11 @@ int get_mounted_filesystems(struct fast_statfs *stats,
     if (fp == NULL)
     {
         result = errno != 0 ? errno : ENOENT;
-		logError("file: "__FILE__", line: %d, "
-			 "call fopen %s fail, "
-			 "errno: %d, error info: %s",
-			 __LINE__, filename, errno, STRERROR(errno));
-		return result;
+        logError("file: "__FILE__", line: %d, "
+             "call fopen %s fail, "
+             "errno: %d, error info: %s",
+             __LINE__, filename, errno, STRERROR(errno));
+        return result;
     }
 
     memset(stats, 0, sizeof(struct fast_statfs) * size);
@@ -269,11 +254,11 @@ int get_mounted_filesystems(struct fast_statfs *stats,
     if (*count == 0)
     {
         result = errno != 0 ? errno : EPERM;
-		logError("file: "__FILE__", line: %d, "
-			 "call getmntinfo fail, "
-			 "errno: %d, error info: %s",
-			 __LINE__, errno, STRERROR(errno));
-		return result;
+        logError("file: "__FILE__", line: %d, "
+             "call getmntinfo fail, "
+             "errno: %d, error info: %s",
+             __LINE__, errno, STRERROR(errno));
+        return result;
     }
 
     if (*count <= size)
@@ -299,7 +284,7 @@ int get_mounted_filesystems(struct fast_statfs *stats,
 #else
     *count = 0;
     logError("file: "__FILE__", line: %d, "
-            "please port me!", __LINE__);
+             "please port me!", __LINE__);
     return EOPNOTSUPP;
 #endif
 }
@@ -330,8 +315,8 @@ static int check_process_capacity(FastProcessArray *proc_array)
     procs = (struct fast_process_info *)malloc(bytes);
     if (procs == NULL)
     {
-		logError("file: "__FILE__", line: %d, "
-			 "malloc %d bytes fail", __LINE__, bytes);
+        logError("file: "__FILE__", line: %d, "
+             "malloc %d bytes fail", __LINE__, bytes);
         return ENOMEM;
     }
 
@@ -483,11 +468,11 @@ int get_processes(struct fast_process_info **processes, int *count)
     {
         *count = 0;
         *processes = NULL;
-		logError("file: "__FILE__", line: %d, "
-			 "call opendir %s fail, "
-			 "errno: %d, error info: %s",
-			 __LINE__, dirname, errno, STRERROR(errno));
-		return errno != 0 ? errno : EPERM;
+        logError("file: "__FILE__", line: %d, "
+             "call opendir %s fail, "
+             "errno: %d, error info: %s",
+             __LINE__, dirname, errno, STRERROR(errno));
+        return errno != 0 ? errno : EPERM;
     }
 
     result = 0;
@@ -529,7 +514,7 @@ int get_processes(struct fast_process_info **processes, int *count)
         SECONDS_TO_TIMEVAL(TIMEVAL_TO_SECONDS(boot_time) +
                 (double)starttime / (double)tickets,
                 proc_array.procs[proc_array.count].starttime);
-	proc_array.procs[proc_array.count].starttime.tv_usec = 0;
+    proc_array.procs[proc_array.count].starttime.tv_usec = 0;
 
         proc_array.count++;
     }
@@ -547,11 +532,11 @@ int get_sysinfo(struct fast_sysinfo*info)
     get_boot_time(&info->boot_time);
     if (sysinfo(&si) != 0)
     {
-		logError("file: "__FILE__", line: %d, " \
-			 "call sysinfo fail, " \
-			 "errno: %d, error info: %s", \
-			 __LINE__, errno, STRERROR(errno));
-		return errno != 0 ? errno : EPERM;
+        logError("file: "__FILE__", line: %d, " \
+             "call sysinfo fail, " \
+             "errno: %d, error info: %s", \
+             __LINE__, errno, STRERROR(errno));
+        return errno != 0 ? errno : EPERM;
     }
 
     info->loads[0] = si.loads[0] / (double)(1 << SI_LOAD_SHIFT);
@@ -609,11 +594,11 @@ int get_processes(struct fast_process_info **processes, int *count)
     size = 0;
     if (sysctl(mib, 4, NULL, &size, NULL, 0) < 0)
     {
-		logError("file: "__FILE__", line: %d, " \
-			 "call sysctl  fail, " \
-			 "errno: %d, error info: %s", \
-			 __LINE__, errno, STRERROR(errno));
-		return errno != 0 ? errno : EPERM;
+        logError("file: "__FILE__", line: %d, " \
+             "call sysctl  fail, " \
+             "errno: %d, error info: %s", \
+             __LINE__, errno, STRERROR(errno));
+        return errno != 0 ? errno : EPERM;
     }
 
     nproc = size / sizeof(struct kinfo_proc);
@@ -671,8 +656,8 @@ int get_processes(struct fast_process_info **processes, int *count)
     *processes = (struct fast_process_info *)malloc(bytes);
     if (*processes == NULL)
     {
-		logError("file: "__FILE__", line: %d, "
-			 "malloc %d bytes fail", __LINE__, bytes);
+        logError("file: "__FILE__", line: %d, "
+             "malloc %d bytes fail", __LINE__, bytes);
         free(procs);
         return ENOMEM;
     }
@@ -708,95 +693,95 @@ int get_sysinfo(struct fast_sysinfo*info)
 {
         int mib[4];
         size_t size;
-	struct loadavg loads;
+    struct loadavg loads;
 #if HAVE_VMMETER_H == 1
-	struct vmtotal vm;
+    struct vmtotal vm;
 #endif
 
 #ifdef VM_SWAPUSAGE
-	struct xsw_usage sw_usage;
+    struct xsw_usage sw_usage;
 #endif
 
-	memset(info, 0, sizeof(struct fast_sysinfo));
-	get_boot_time(&info->boot_time);
+    memset(info, 0, sizeof(struct fast_sysinfo));
+    get_boot_time(&info->boot_time);
 
-	mib[0] = CTL_VM;
-	mib[1] = VM_LOADAVG;
-	size = sizeof(loads);
-	if (sysctl(mib, 2, &loads, &size, NULL, 0) != 0)
-	{
-		logError("file: "__FILE__", line: %d, " \
-				"call sysctl  fail, " \
-				"errno: %d, error info: %s", \
-				__LINE__, errno, STRERROR(errno));
-	}
-	else if (loads.fscale > 0)
-	{
-		info->loads[0] = (double)loads.ldavg[0] / loads.fscale;
-		info->loads[1] = (double)loads.ldavg[1] / loads.fscale;
-		info->loads[2] = (double)loads.ldavg[2] / loads.fscale;
-	}
+    mib[0] = CTL_VM;
+    mib[1] = VM_LOADAVG;
+    size = sizeof(loads);
+    if (sysctl(mib, 2, &loads, &size, NULL, 0) != 0)
+    {
+        logError("file: "__FILE__", line: %d, " \
+                "call sysctl  fail, " \
+                "errno: %d, error info: %s", \
+                __LINE__, errno, STRERROR(errno));
+    }
+    else if (loads.fscale > 0)
+    {
+        info->loads[0] = (double)loads.ldavg[0] / loads.fscale;
+        info->loads[1] = (double)loads.ldavg[1] / loads.fscale;
+        info->loads[2] = (double)loads.ldavg[2] / loads.fscale;
+    }
 
-	mib[0] = CTL_KERN;
-	mib[1] = KERN_PROC;
-	mib[2] = KERN_PROC_ALL;
-	mib[3] =  0;
-	size = 0;
-	if (sysctl(mib, 4, NULL, &size, NULL, 0) != 0)
-	{
-		logError("file: "__FILE__", line: %d, " \
-			"call sysctl  fail, " \
-			"errno: %d, error info: %s", \
-			__LINE__, errno, STRERROR(errno));
-	}
-	else
-	{
-		info->procs = size / sizeof(struct kinfo_proc);
-	}
+    mib[0] = CTL_KERN;
+    mib[1] = KERN_PROC;
+    mib[2] = KERN_PROC_ALL;
+    mib[3] =  0;
+    size = 0;
+    if (sysctl(mib, 4, NULL, &size, NULL, 0) != 0)
+    {
+        logError("file: "__FILE__", line: %d, " \
+            "call sysctl  fail, " \
+            "errno: %d, error info: %s", \
+            __LINE__, errno, STRERROR(errno));
+    }
+    else
+    {
+        info->procs = size / sizeof(struct kinfo_proc);
+    }
 
-	get_sys_total_mem_size((int64_t *)&info->totalram);
+    get_sys_total_mem_size((int64_t *)&info->totalram);
 
 #if HAVE_VMMETER_H == 1
-	mib[0] = CTL_VM;
-	mib[1] = VM_METER;
-	size = sizeof(vm);
-	if (sysctl(mib, 2, &vm, &size, NULL, 0) != 0)
-	{
-		logError("file: "__FILE__", line: %d, " \
-			"call sysctl  fail, " \
-			"errno: %d, error info: %s", \
-			__LINE__, errno, STRERROR(errno));
-	}
-	else
-	{
-		int page_size;
+    mib[0] = CTL_VM;
+    mib[1] = VM_METER;
+    size = sizeof(vm);
+    if (sysctl(mib, 2, &vm, &size, NULL, 0) != 0)
+    {
+        logError("file: "__FILE__", line: %d, " \
+            "call sysctl  fail, " \
+            "errno: %d, error info: %s", \
+            __LINE__, errno, STRERROR(errno));
+    }
+    else
+    {
+        int page_size;
 
-		page_size = sysconf(_SC_PAGESIZE);
-		info->freeram = vm.t_free * page_size;
-		info->sharedram = vm.t_rmshr * page_size;
-		//info->bufferram = vm.   //TODO:
-	}
+        page_size = sysconf(_SC_PAGESIZE);
+        info->freeram = vm.t_free * page_size;
+        info->sharedram = vm.t_rmshr * page_size;
+        //info->bufferram = vm.   //TODO:
+    }
 #endif
 
 #ifdef VM_SWAPUSAGE
-	mib[0] = CTL_VM;
-	mib[1] = VM_SWAPUSAGE;
-	size = sizeof(sw_usage);
-	if (sysctl(mib, 2, &sw_usage, &size, NULL, 0) != 0)
-	{
-		logError("file: "__FILE__", line: %d, " \
-			"call sysctl  fail, " \
-			"errno: %d, error info: %s", \
-			__LINE__, errno, STRERROR(errno));
-	}
-	else
-	{
-		info->totalswap = sw_usage.xsu_total;
-		info->freeswap = sw_usage.xsu_avail;
-	}
+    mib[0] = CTL_VM;
+    mib[1] = VM_SWAPUSAGE;
+    size = sizeof(sw_usage);
+    if (sysctl(mib, 2, &sw_usage, &size, NULL, 0) != 0)
+    {
+        logError("file: "__FILE__", line: %d, " \
+            "call sysctl  fail, " \
+            "errno: %d, error info: %s", \
+            __LINE__, errno, STRERROR(errno));
+    }
+    else
+    {
+        info->totalswap = sw_usage.xsu_total;
+        info->freeswap = sw_usage.xsu_avail;
+    }
 #endif
 
-	return 0;
+    return 0;
 }
 
 #endif

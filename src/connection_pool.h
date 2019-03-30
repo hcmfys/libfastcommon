@@ -24,41 +24,40 @@
 extern "C" {
 #endif
 
-typedef struct
-{
-	int sock;
-	int port;
-	char ip_addr[INET6_ADDRSTRLEN];
+typedef struct {
+    int sock;
+    int port;
+    char ip_addr[INET6_ADDRSTRLEN];
     int socket_domain;  //socket domain, AF_INET, AF_INET6 or PF_UNSPEC for auto dedect
 } ConnectionInfo;
 
 struct tagConnectionManager;
 
 typedef struct tagConnectionNode {
-	ConnectionInfo *conn;
-	struct tagConnectionManager *manager;
-	struct tagConnectionNode *next;
-	time_t atime;  //last access time
+    ConnectionInfo *conn;
+    struct tagConnectionManager *manager;
+    struct tagConnectionNode *next;
+    time_t atime;  //last access time
 } ConnectionNode;
 
 typedef struct tagConnectionManager {
-	ConnectionNode *head;
-	int total_count;  //total connections
-	int free_count;   //free connections
-	pthread_mutex_t lock;
+    ConnectionNode *head;
+    int total_count;  //total connections
+    int free_count;   //free connections
+    pthread_mutex_t lock;
 } ConnectionManager;
 
 typedef struct tagConnectionPool {
-	HashArray hash_array;  //key is ip:port, value is ConnectionManager
-	pthread_mutex_t lock;
-	int connect_timeout;
-	int max_count_per_entry;  //0 means no limit
+    HashArray hash_array;  //key is ip:port, value is ConnectionManager
+    pthread_mutex_t lock;
+    int connect_timeout;
+    int max_count_per_entry;  //0 means no limit
 
-	/*
-	connections whose the idle time exceeds this time will be closed
+    /*
+    connections whose the idle time exceeds this time will be closed
     unit: second
-	*/
-	int max_idle_time;
+    */
+    int max_idle_time;
     int socket_domain;  //socket domain
 } ConnectionPool;
 
@@ -73,8 +72,8 @@ typedef struct tagConnectionPool {
 *   return 0 for success, != 0 for error
 */
 int conn_pool_init_ex(ConnectionPool *cp, int connect_timeout,
-	const int max_count_per_entry, const int max_idle_time,
-    const int socket_domain);
+                      const int max_count_per_entry, const int max_idle_time,
+                      const int socket_domain);
 
 /**
 *   init function
@@ -86,7 +85,7 @@ int conn_pool_init_ex(ConnectionPool *cp, int connect_timeout,
 *   return 0 for success, != 0 for error
 */
 int conn_pool_init(ConnectionPool *cp, int connect_timeout,
-	const int max_count_per_entry, const int max_idle_time);
+                   const int max_count_per_entry, const int max_idle_time);
 
 /**
 *   destroy function
@@ -104,11 +103,11 @@ void conn_pool_destroy(ConnectionPool *cp);
 *      err_no: return the the errno, 0 for success
 *   return != NULL for success, NULL for error
 */
-ConnectionInfo *conn_pool_get_connection(ConnectionPool *cp, 
-	const ConnectionInfo *conn, int *err_no);
+ConnectionInfo *conn_pool_get_connection(ConnectionPool *cp,
+                                         const ConnectionInfo *conn, int *err_no);
 
 #define conn_pool_close_connection(cp, conn) \
-	conn_pool_close_connection_ex(cp, conn, false)
+    conn_pool_close_connection_ex(cp, conn, false)
 
 /**
 *   push back the connection to pool
@@ -118,8 +117,8 @@ ConnectionInfo *conn_pool_get_connection(ConnectionPool *cp,
 *      bForce: set true to close the socket, else only push back to connection pool
 *   return 0 for success, != 0 for error
 */
-int conn_pool_close_connection_ex(ConnectionPool *cp, ConnectionInfo *conn, 
-	const bool bForce);
+int conn_pool_close_connection_ex(ConnectionPool *cp, ConnectionInfo *conn,
+                                  const bool bForce);
 
 /**
 *   disconnect from the server
@@ -138,7 +137,7 @@ void conn_pool_disconnect_server(ConnectionInfo *pConnection);
 *   return 0 for success, != 0 for error
 */
 int conn_pool_connect_server(ConnectionInfo *pConnection, \
-		const int connect_timeout);
+        const int connect_timeout);
 
 /**
 *   get connection count of the pool
@@ -159,8 +158,8 @@ int conn_pool_get_connection_count(ConnectionPool *cp);
 *   return 0 for success, != 0 for error
 */
 int conn_pool_load_server_info(IniContext *pIniContext, const char *filename,
-        const char *item_name, ConnectionInfo *pServerInfo,
-        const int default_port);
+                               const char *item_name, ConnectionInfo *pServerInfo,
+                               const int default_port);
 
 /**
 *   parse server info from string
@@ -171,7 +170,7 @@ int conn_pool_load_server_info(IniContext *pIniContext, const char *filename,
 *   return 0 for success, != 0 for error
 */
 int conn_pool_parse_server_info(const char *pServerStr,
-        ConnectionInfo *pServerInfo, const int default_port);
+                                ConnectionInfo *pServerInfo, const int default_port);
 
 #ifdef __cplusplus
 }

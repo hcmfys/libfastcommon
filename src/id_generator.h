@@ -55,8 +55,8 @@ struct idg_context {
 * return error no, 0 for success, none zero for fail
 */
 int id_generator_init_extra_ex(struct idg_context *context, const char *filename,
-    const int machine_id, const int mid_bits, const int extra_bits,
-    const int sn_bits, const mode_t mode);
+                               const int machine_id, const int mid_bits, const int extra_bits,
+                               const int sn_bits, const mode_t mode);
 
 /**
 * init function
@@ -70,8 +70,8 @@ int id_generator_init_extra_ex(struct idg_context *context, const char *filename
 * return error no, 0 for success, none zero for fail
 */
 int id_generator_init_extra(struct idg_context *context, const char *filename,
-    const int machine_id, const int mid_bits, const int extra_bits,
-    const int sn_bits);
+                            const int machine_id, const int mid_bits, const int extra_bits,
+                            const int sn_bits);
 
 /**
 * init function
@@ -84,12 +84,11 @@ int id_generator_init_extra(struct idg_context *context, const char *filename,
 * return error no, 0 for success, none zero for fail
 */
 static inline int id_generator_init_ex(struct idg_context *context,
-        const char *filename, const int machine_id, const int mid_bits,
-        const int sn_bits)
-{
+                                       const char *filename, const int machine_id, const int mid_bits,
+                                       const int sn_bits) {
     const int extra_bits = 0;
-	return id_generator_init_extra(context, filename, machine_id, mid_bits,
-            extra_bits, sn_bits);
+    return id_generator_init_extra(context, filename, machine_id, mid_bits,
+                                   extra_bits, sn_bits);
 }
 
 /**
@@ -103,14 +102,13 @@ static inline int id_generator_init_ex(struct idg_context *context,
 *   filename: the filename to store id
 * return error no, 0 for success, none zero for fail
 */
-static inline int id_generator_init(struct idg_context *context, const char *filename)
-{
-	const int machine_id = 0;
-	const int mid_bits = 16;
+static inline int id_generator_init(struct idg_context *context, const char *filename) {
+    const int machine_id = 0;
+    const int mid_bits = 16;
     const int extra_bits = 0;
-	const int sn_bits = 16;
-	return id_generator_init_extra(context, filename, machine_id, mid_bits,
-            extra_bits, sn_bits);
+    const int sn_bits = 16;
+    return id_generator_init_extra(context, filename, machine_id, mid_bits,
+                                   extra_bits, sn_bits);
 }
 
 /**
@@ -130,7 +128,7 @@ void id_generator_destroy(struct idg_context *context);
 * return error no, 0 for success, none zero for fail
 */
 int id_generator_next_extra_ptr(struct idg_context *context,
-        const int *extra, int64_t *id);
+                                const int *extra, int64_t *id);
 
 /**
 * generate next id with extra data
@@ -141,8 +139,7 @@ int id_generator_next_extra_ptr(struct idg_context *context,
 * return error no, 0 for success, none zero for fail
 */
 static inline int id_generator_next_extra(struct idg_context *context,
-        const int extra, int64_t *id)
-{
+                                          const int extra, int64_t *id) {
     return id_generator_next_extra_ptr(context, &extra, id);
 }
 
@@ -154,8 +151,7 @@ static inline int id_generator_next_extra(struct idg_context *context,
 * return error no, 0 for success, none zero for fail
 */
 static inline int id_generator_next_extra_by_mod(struct idg_context *context,
-        int64_t *id)
-{
+                                                 int64_t *id) {
     return id_generator_next_extra_ptr(context, NULL, id);
 }
 
@@ -166,8 +162,7 @@ static inline int id_generator_next_extra_by_mod(struct idg_context *context,
 *   id: store the id
 * return error no, 0 for success, none zero for fail
 */
-static inline int id_generator_next(struct idg_context *context, int64_t *id)
-{
+static inline int id_generator_next(struct idg_context *context, int64_t *id) {
     const int extra = 0;
     return id_generator_next_extra_ptr(context, &extra, id);
 }
@@ -180,9 +175,8 @@ static inline int id_generator_next(struct idg_context *context, int64_t *id)
 * return the extra data
 */
 static inline int id_generator_get_extra(struct idg_context *context,
-        const int64_t id)
-{
-    return (int)((id & context->extra_mask) >> context->sn_bits);
+                                         const int64_t id) {
+    return (int) ((id & context->extra_mask) >> context->sn_bits);
 }
 
 /**
@@ -193,9 +187,8 @@ static inline int id_generator_get_extra(struct idg_context *context,
 * return the timestamp
 */
 static inline long id_generator_get_timestamp(struct idg_context *context,
-        const int64_t id)
-{
-    return (long)(id >> context->mes_bits_sum);
+                                              const int64_t id) {
+    return (long) (id >> context->mes_bits_sum);
 }
 
 #ifdef __cplusplus

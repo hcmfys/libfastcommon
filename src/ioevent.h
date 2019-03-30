@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <poll.h>
 #include <sys/time.h>
-#include "_os_define.h"
+//#include "_os_define.h"
 
 #define IOEVENT_TIMEOUT  0x8000
 
@@ -72,42 +72,42 @@ typedef struct ioevent_puller {
 } IOEventPoller;
 
 #if IOEVENT_USE_EPOLL
-  #define IOEVENT_GET_EVENTS(ioevent, index) \
+#define IOEVENT_GET_EVENTS(ioevent, index) \
       (ioevent)->events[index].events
 #elif IOEVENT_USE_KQUEUE
-  #define IOEVENT_GET_EVENTS(ioevent, index)  kqueue_ev_convert( \
+#define IOEVENT_GET_EVENTS(ioevent, index)  kqueue_ev_convert( \
       (ioevent)->events[index].filter, (ioevent)->events[index].flags)
 #elif IOEVENT_USE_PORT
-  #define IOEVENT_GET_EVENTS(ioevent, index) \
+#define IOEVENT_GET_EVENTS(ioevent, index) \
       (ioevent)->events[index].portev_events
 #else
-#error port me
+
 #endif
 
 #if IOEVENT_USE_EPOLL
-  #define IOEVENT_GET_DATA(ioevent, index)  \
+#define IOEVENT_GET_DATA(ioevent, index)  \
       (ioevent)->events[index].data.ptr
 #elif IOEVENT_USE_KQUEUE
-  #define IOEVENT_GET_DATA(ioevent, index)  \
+#define IOEVENT_GET_DATA(ioevent, index)  \
       (ioevent)->events[index].udata
 #elif IOEVENT_USE_PORT
-  #define IOEVENT_GET_DATA(ioevent, index)  \
+#define IOEVENT_GET_DATA(ioevent, index)  \
       (ioevent)->events[index].portev_user
 #else
-#error port me
+
 #endif
 
 #if IOEVENT_USE_EPOLL
-  #define IOEVENT_CLEAR_DATA(ioevent, index)  \
+#define IOEVENT_CLEAR_DATA(ioevent, index)  \
       (ioevent)->events[index].data.ptr = NULL
 #elif IOEVENT_USE_KQUEUE
-  #define IOEVENT_CLEAR_DATA(ioevent, index)  \
+#define IOEVENT_CLEAR_DATA(ioevent, index)  \
       (ioevent)->events[index].udata = NULL
 #elif IOEVENT_USE_PORT
-  #define IOEVENT_CLEAR_DATA(ioevent, index)  \
+#define IOEVENT_CLEAR_DATA(ioevent, index)  \
       (ioevent)->events[index].portev_user = NULL
 #else
-#error port me
+
 #endif
 
 #ifdef __cplusplus
@@ -115,30 +115,32 @@ extern "C" {
 #endif
 
 int ioevent_init(IOEventPoller *ioevent, const int size,
-    const int timeout_ms, const int extra_events);
+                 const int timeout_ms, const int extra_events);
+
 void ioevent_destroy(IOEventPoller *ioevent);
 
 int ioevent_attach(IOEventPoller *ioevent, const int fd, const int e,
-    void *data);
+                   void *data);
+
 int ioevent_modify(IOEventPoller *ioevent, const int fd, const int e,
-    void *data);
+                   void *data);
+
 int ioevent_detach(IOEventPoller *ioevent, const int fd);
+
 int ioevent_poll(IOEventPoller *ioevent);
 
-static inline void ioevent_set_timeout(IOEventPoller *ioevent, const int timeout_ms)
-{
+static inline void ioevent_set_timeout(IOEventPoller *ioevent, const int timeout_ms) {
 #if IOEVENT_USE_EPOLL
-  ioevent->timeout = timeout_ms;
+    ioevent->timeout = timeout_ms;
 #else
-  ioevent->timeout.tv_sec = timeout_ms / 1000;
-  ioevent->timeout.tv_nsec = 1000000 * (timeout_ms % 1000);
+    //ioevent->timeout.tv_sec = timeout_ms / 1000;
+    //ioevent->timeout.tv_nsec = 1000000 * (timeout_ms % 1000);
 #endif
 }
 
-static inline int ioevent_poll_ex(IOEventPoller *ioevent, const int timeout_ms)
-{
-  ioevent_set_timeout(ioevent, timeout_ms);
-  return ioevent_poll(ioevent);
+static inline int ioevent_poll_ex(IOEventPoller *ioevent, const int timeout_ms) {
+    ioevent_set_timeout(ioevent, timeout_ms);
+    return ioevent_poll(ioevent);
 }
 
 #ifdef __cplusplus

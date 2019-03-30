@@ -11,23 +11,21 @@
 
 #include "common_define.h"
 
-#define CHAIN_TYPE_INSERT	0  //insert new node before head
-#define CHAIN_TYPE_APPEND	1  //insert new node after tail
-#define CHAIN_TYPE_SORTED	2  //sorted chain
+#define CHAIN_TYPE_INSERT    0  //insert new node before head
+#define CHAIN_TYPE_APPEND    1  //insert new node after tail
+#define CHAIN_TYPE_SORTED    2  //sorted chain
 
-typedef struct tagChainNode
-{
-	void *data;
-	struct tagChainNode *next;
+typedef struct tagChainNode {
+    void *data;
+    struct tagChainNode *next;
 } ChainNode;
 
-typedef struct
-{
-	int type;
-	ChainNode *head;
-	ChainNode *tail;
-	FreeDataFunc freeDataFunc;
-	CompareFunc compareFunc;
+typedef struct {
+    int type;
+    ChainNode *head;
+    ChainNode *tail;
+    FreeDataFunc freeDataFunc;
+    CompareFunc compareFunc;
 } ChainList;
 
 #ifdef __cplusplus
@@ -47,7 +45,7 @@ extern "C" {
  *  return: none
  */
 void chain_init(ChainList *pList, const int type, FreeDataFunc freeDataFunc, \
-		CompareFunc compareFunc);
+        CompareFunc compareFunc);
 
 /** destroy chain
  * parameters:
@@ -88,7 +86,7 @@ void freeChainNode(ChainList *pList, ChainNode *pChainNode);
  * return: none
  */
 void deleteNodeEx(ChainList *pList, ChainNode *pPreviousNode, \
-		ChainNode *pDeletedNode);
+        ChainNode *pDeletedNode);
 
 /** delete the chain nodes from pPreviousNode->next to pDeletedNext 
  * (not including pDeletedNext)
@@ -99,7 +97,7 @@ void deleteNodeEx(ChainList *pList, ChainNode *pPreviousNode, \
  * return: none
  */
 void deleteToNodePrevious(ChainList *pList, ChainNode *pPreviousNode, \
-		ChainNode *pDeletedNext);
+        ChainNode *pDeletedNext);
 
 /** delete the chain node using data compare function
  * parameters:

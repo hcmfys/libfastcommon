@@ -47,19 +47,19 @@ extern "C" {
 #endif
 
 typedef int (*getnamefunc)(int socket, struct sockaddr *address, \
-		socklen_t *address_len);
+        socklen_t *address_len);
 
-typedef int (*tcpsenddatafunc)(int sock, void* data, const int size, \
-		const int timeout);
+typedef int (*tcpsenddatafunc)(int sock, void *data, const int size, \
+        const int timeout);
 
 typedef int (*tcprecvdata_exfunc)(int sock, void *data, const int size, \
-		const int timeout, int *count);
+        const int timeout, int *count);
 
 #define getSockIpaddr(sock, buff, bufferSize) \
-	getIpaddr(getsockname, sock, buff, bufferSize)
+    getIpaddr(getsockname, sock, buff, bufferSize)
 
 #define getPeerIpaddr(sock, buff, bufferSize) \
-	getIpaddr(getpeername, sock, buff, bufferSize)
+    getIpaddr(getpeername, sock, buff, bufferSize)
 
 /** get a line from socket
  *  parameters:
@@ -81,7 +81,7 @@ int tcpgets(int sock, char *s, const int size, const int timeout);
  *  return: error no, 0 success, != 0 fail
 */
 int tcprecvdata_ex(int sock, void *data, const int size, \
-		const int timeout, int *count);
+        const int timeout, int *count);
 
 /** recv data (non-block mode)
  *  parameters:
@@ -93,7 +93,7 @@ int tcprecvdata_ex(int sock, void *data, const int size, \
  *  return: error no, 0 success, != 0 fail
 */
 int tcprecvdata_nb_ex(int sock, void *data, const int size, \
-		const int timeout, int *count);
+        const int timeout, int *count);
 
 /** recv data (non-block mode) in ms
  *  parameters:
@@ -105,7 +105,7 @@ int tcprecvdata_nb_ex(int sock, void *data, const int size, \
  *  return: error no, 0 success, != 0 fail
 */
 int tcprecvdata_nb_ms(int sock, void *data, const int size, \
-		const int timeout_ms, int *count);
+        const int timeout_ms, int *count);
 
 /** send data (block mode)
  *  parameters:
@@ -115,7 +115,7 @@ int tcprecvdata_nb_ms(int sock, void *data, const int size, \
  *          timeout: write timeout
  *  return: error no, 0 success, != 0 fail
 */
-int tcpsenddata(int sock, void* data, const int size, const int timeout);
+int tcpsenddata(int sock, void *data, const int size, const int timeout);
 
 /** send data (non-block mode)
  *  parameters:
@@ -125,7 +125,7 @@ int tcpsenddata(int sock, void* data, const int size, const int timeout);
  *          timeout: write timeout
  *  return: error no, 0 success, != 0 fail
 */
-int tcpsenddata_nb(int sock, void* data, const int size, const int timeout);
+int tcpsenddata_nb(int sock, void *data, const int size, const int timeout);
 
 /** connect to server by block mode
  *  parameters:
@@ -146,8 +146,8 @@ int connectserverbyip(int sock, const char *server_ip, const short server_port);
  *  return: error no, 0 success, != 0 fail
 */
 int connectserverbyip_nb_ex(int sock, const char *server_ip, \
-		const short server_port, const int timeout, \
-		const bool auto_detect);
+        const short server_port, const int timeout, \
+        const bool auto_detect);
 
 /** connect to server by non-block mode, the socket must be set to non-block
  *  parameters:
@@ -158,7 +158,7 @@ int connectserverbyip_nb_ex(int sock, const char *server_ip, \
  *  return: error no, 0 success, != 0 fail
 */
 #define connectserverbyip_nb(sock, server_ip, server_port, timeout) \
-	connectserverbyip_nb_ex(sock, server_ip, server_port, timeout, false)
+    connectserverbyip_nb_ex(sock, server_ip, server_port, timeout, false)
 
 /** connect to server by non-block mode, auto detect socket block mode
  *  parameters:
@@ -169,7 +169,7 @@ int connectserverbyip_nb_ex(int sock, const char *server_ip, \
  *  return: error no, 0 success, != 0 fail
 */
 #define connectserverbyip_nb_auto(sock, server_ip, server_port, timeout) \
-	connectserverbyip_nb_ex(sock, server_ip, server_port, timeout, true)
+    connectserverbyip_nb_ex(sock, server_ip, server_port, timeout, true)
 
 /** accept client connect request
  *  parameters:
@@ -227,7 +227,7 @@ int tcpprintkeepalive(int fd);
  *  return: in_addr_t, INADDR_NONE for fail
 */
 in_addr_t getIpaddr(getnamefunc getname, int sock, \
-		char *buff, const int bufferSize);
+        char *buff, const int bufferSize);
 
 /** get hostname by it's ip address
  *  parameters:
@@ -276,13 +276,13 @@ int socketBind(int sock, const char *bind_ipaddr, const int port);
 int socketServer(const char *bind_ipaddr, const int port, int *err_no);
 
 #define tcprecvdata(sock, data, size, timeout) \
-	tcprecvdata_ex(sock, data, size, timeout, NULL)
+    tcprecvdata_ex(sock, data, size, timeout, NULL)
 
 #define tcpsendfile(sock, filename, file_bytes, timeout, total_send_bytes) \
-	tcpsendfile_ex(sock, filename, 0, file_bytes, timeout, total_send_bytes)
+    tcpsendfile_ex(sock, filename, 0, file_bytes, timeout, total_send_bytes)
 
 #define tcprecvdata_nb(sock, data, size, timeout) \
-	tcprecvdata_nb_ex(sock, data, size, timeout, NULL)
+    tcprecvdata_nb_ex(sock, data, size, timeout, NULL)
 
 /** send a file
  *  parameters:
@@ -295,7 +295,7 @@ int socketServer(const char *bind_ipaddr, const int port, int *err_no);
  *  return: error no, 0 success, != 0 fail
 */
 int tcpsendfile_ex(int sock, const char *filename, const int64_t file_offset, \
-	const int64_t file_bytes, const int timeout, int64_t *total_send_bytes);
+    const int64_t file_bytes, const int timeout, int64_t *total_send_bytes);
 
 /** receive data to a file
  *  parameters:
@@ -308,14 +308,14 @@ int tcpsendfile_ex(int sock, const char *filename, const int64_t file_offset, \
  *  return: error no, 0 success, != 0 fail
 */
 int tcprecvfile(int sock, const char *filename, const int64_t file_bytes, \
-		const int fsync_after_written_bytes, const int timeout, \
-		int64_t *true_file_bytes);
+        const int fsync_after_written_bytes, const int timeout, \
+        int64_t *true_file_bytes);
 
 
 #define tcprecvinfinitefile(sock, filename, fsync_after_written_bytes, \
-			timeout, file_bytes) \
-	tcprecvfile(sock, filename, INFINITE_FILE_SIZE, \
-		fsync_after_written_bytes, timeout, file_bytes)
+            timeout, file_bytes) \
+    tcprecvfile(sock, filename, INFINITE_FILE_SIZE, \
+        fsync_after_written_bytes, timeout, file_bytes)
 
 
 /** receive data to a file
@@ -329,8 +329,8 @@ int tcprecvfile(int sock, const char *filename, const int64_t file_bytes, \
  *  return: error no, 0 success, != 0 fail
 */
 int tcprecvfile_ex(int sock, const char *filename, const int64_t file_bytes, \
-		const int fsync_after_written_bytes, \
-		unsigned int *hash_codes, const int timeout);
+        const int fsync_after_written_bytes, \
+        unsigned int *hash_codes, const int timeout);
 
 /** receive specified data and discard
  *  parameters:
@@ -341,7 +341,7 @@ int tcprecvfile_ex(int sock, const char *filename, const int64_t file_bytes, \
  *  return: error no, 0 success, != 0 fail
 */
 int tcpdiscard(int sock, const int bytes, const int timeout, \
-		int64_t *total_recv_bytes);
+        int64_t *total_recv_bytes);
 
 /** get local host ip addresses
  *  parameters:
@@ -351,7 +351,7 @@ int tcpdiscard(int sock, const int bytes, const int timeout, \
  *  return: error no, 0 success, != 0 fail
 */
 int getlocaladdrs(char ip_addrs[][IP_ADDRESS_SIZE], \
-	const int max_count, int *count);
+    const int max_count, int *count);
 
 /** get local host ip addresses by if alias prefix
  *  parameters:
@@ -363,7 +363,7 @@ int getlocaladdrs(char ip_addrs[][IP_ADDRESS_SIZE], \
  *  return: error no, 0 success, != 0 fail
 */
 int gethostaddrs(char **if_alias_prefixes, const int prefix_count, \
-	char ip_addrs[][IP_ADDRESS_SIZE], const int max_count, int *count);
+    char ip_addrs[][IP_ADDRESS_SIZE], const int max_count, int *count);
 
 /** get local if configs
  *  parameters:
@@ -385,17 +385,15 @@ int getifconfigs(FastIFConfig *if_configs, const int max_count, int *count);
  *  return: error no, 0 success, != 0 fail
 */
 int setsockaddrbyip(const char *ip, const short port, struct sockaddr_in *addr,
-        struct sockaddr_in6 *addr6, void **output, int *size);
+                    struct sockaddr_in6 *addr6, void **output, int *size);
 
-static inline bool is_ipv6_addr(const char *ip)
-{
+static inline bool is_ipv6_addr(const char *ip) {
     return (*ip == ':' || strchr(ip, ':') != NULL); //ipv6
 }
 
 void tcp_set_try_again_when_interrupt(const bool value);
 
-static inline void tcp_dont_try_again_when_interrupt()
-{
+static inline void tcp_dont_try_again_when_interrupt() {
     tcp_set_try_again_when_interrupt(false);
 }
 

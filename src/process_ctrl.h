@@ -13,7 +13,7 @@ extern "C" {
 #endif
 
 int get_base_path_from_conf_file(const char *filename, char *base_path,
-	const int path_size);
+                                 const int path_size);
 
 int get_pid_from_file(const char *pidFilename, pid_t *pid);
 

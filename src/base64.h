@@ -13,26 +13,25 @@
 
 #include "common_define.h"
 
-struct base64_context
-{
-	char line_separator[16];
-	int line_sep_len;
+struct base64_context {
+    char line_separator[16];
+    int line_sep_len;
 
-	/**
-	 * max chars per line, excluding line_separator.  A multiple of 4.
-	 */
-	int line_length;
+    /**
+     * max chars per line, excluding line_separator.  A multiple of 4.
+     */
+    int line_length;
 
-	/**
-	 * letter of the alphabet used to encode binary values 0..63
-	 */
-	unsigned char valueToChar[64];
+    /**
+     * letter of the alphabet used to encode binary values 0..63
+     */
+    unsigned char valueToChar[64];
 
-	/**
-	 * binary value encoded by a given letter of the alphabet 0..63
-	 */
-	int charToValue[256];
-	int pad_ch;
+    /**
+     * binary value encoded by a given letter of the alphabet 0..63
+     */
+    int charToValue[256];
+    int pad_ch;
 };
 
 #ifdef __cplusplus
@@ -61,8 +60,8 @@ extern "C" {
  *  return: none
  */
 void base64_init_ex(struct base64_context *context, const int nLineLength, \
-		const unsigned char chPlus, const unsigned char chSplash, \
-		const unsigned char chPad);
+        const unsigned char chPlus, const unsigned char chSplash, \
+        const unsigned char chPad);
 
 /** calculate the encoded length of the source buffer
  *  parameters:
@@ -83,7 +82,7 @@ int base64_get_encode_length(struct base64_context *context, const int nSrcLen);
  *  return: the encoded buffer
  */
 char *base64_encode_ex(struct base64_context *context, const char *src, \
-		const int nSrcLen, char *dest, int *dest_len, const bool bPad);
+        const int nSrcLen, char *dest, int *dest_len, const bool bPad);
 
 /** base64 decode buffer, work only with padding source string
  *  parameters:
@@ -95,7 +94,7 @@ char *base64_encode_ex(struct base64_context *context, const char *src, \
  *  return: the decoded buffer
  */
 char *base64_decode(struct base64_context *context, const char *src, \
-		const int nSrcLen, char *dest, int *dest_len);
+        const int nSrcLen, char *dest, int *dest_len);
 
 /** base64 decode buffer, can work with no padding source string
  *  parameters:
@@ -107,7 +106,7 @@ char *base64_decode(struct base64_context *context, const char *src, \
  *  return: the decoded buffer
  */
 char *base64_decode_auto(struct base64_context *context, const char *src, \
-		const int nSrcLen, char *dest, int *dest_len);
+        const int nSrcLen, char *dest, int *dest_len);
 
 /** set line separator string, such as \n or \r\n
  *  parameters:
@@ -116,7 +115,7 @@ char *base64_decode_auto(struct base64_context *context, const char *src, \
  *  return: none
  */
 void base64_set_line_separator(struct base64_context *context, \
-		const char *pLineSeparator);
+        const char *pLineSeparator);
 
 /** set line length, 0 for never add line separators
  *  parameters:

@@ -31,86 +31,86 @@ extern "C" {
 #define MFSNAMELEN 16
 #endif
 
-#ifndef MNAMELEN 
+#ifndef MNAMELEN
 #define MNAMELEN 128
 #endif
 
-   typedef struct fast_statfs {
-        long    f_type;     /* type of file system (see below) */
-        long    f_bsize;    /* optimal transfer block size */
-        long    f_blocks;   /* total data blocks in file system */
-        long    f_bfree;    /* free blocks in fs */
-        long    f_bavail;   /* free blocks avail to non-superuser */
-        long    f_files;    /* total file nodes in file system */
-        long    f_ffree;    /* free file nodes in fs */
+typedef struct fast_statfs {
+    long f_type;     /* type of file system (see below) */
+    long f_bsize;    /* optimal transfer block size */
+    long f_blocks;   /* total data blocks in file system */
+    long f_bfree;    /* free blocks in fs */
+    long f_bavail;   /* free blocks avail to non-superuser */
+    long f_files;    /* total file nodes in file system */
+    long f_ffree;    /* free file nodes in fs */
 #ifdef HAVE_FILE_SYSTEM_ID
-        fsid_t  f_fsid;     /* file system id */
+    fsid_t  f_fsid;     /* file system id */
 #endif
-        char    f_fstypename[MFSNAMELEN]; /* fs type name */
-        char    f_mntfromname[MNAMELEN];  /* mounted file system */
-        char    f_mntonname[MNAMELEN];    /* directory on which mounted */
-    } FastStatFS;
+    char f_fstypename[MFSNAMELEN]; /* fs type name */
+    char f_mntfromname[MNAMELEN];  /* mounted file system */
+    char f_mntonname[MNAMELEN];    /* directory on which mounted */
+} FastStatFS;
 
 #if defined(OS_LINUX) || defined(OS_FREEBSD)
-   struct fast_sysinfo {
-       struct timeval boot_time;   /* system boot times */
-       double loads[3];  /* 1, 5, and 15 minute load averages */
-       unsigned long totalram;  /* Total usable main memory size */
-       unsigned long freeram;   /* Available memory size */
-       unsigned long sharedram; /* Amount of shared memory */
-       unsigned long bufferram; /* Memory used by buffers */
-       unsigned long totalswap; /* Total swap space size */
-       unsigned long freeswap;  /* swap space still available */
-       unsigned short procs;    /* Number of current processes */
-   };
+struct fast_sysinfo {
+    struct timeval boot_time;   /* system boot times */
+    double loads[3];  /* 1, 5, and 15 minute load averages */
+    unsigned long totalram;  /* Total usable main memory size */
+    unsigned long freeram;   /* Available memory size */
+    unsigned long sharedram; /* Amount of shared memory */
+    unsigned long bufferram; /* Memory used by buffers */
+    unsigned long totalswap; /* Total swap space size */
+    unsigned long freeswap;  /* swap space still available */
+    unsigned short procs;    /* Number of current processes */
+};
 
-   typedef struct fast_process_info {
-       int field_count;  //field count in /proc/$pid/stat
-       int pid;
-       char comm[128];
-       char state;
-       int ppid;
-       int pgrp;
-       int session;
-       int tty_nr;
-       int tpgid;
-       unsigned int flags;
-       unsigned long minflt;
-       unsigned long cminflt;
-       unsigned long majflt;
-       unsigned long cmajflt;
-       unsigned long utime;
-       unsigned long stime;
-       long cutime;
-       long cstime;
-       long priority;
-       long nice;
-       long num_threads;
-       long itrealvalue;
-       struct timeval starttime;
-       unsigned long vsize;
-       long rss;
-       unsigned long rsslim;
-       unsigned long startcode;
-       unsigned long endcode;
-       unsigned long startstack;
-       unsigned long kstkesp;
-       unsigned long kstkeip;
-       unsigned long signal;
-       unsigned long blocked;
-       unsigned long sigignore;
-       unsigned long sigcatch;
-       unsigned long wchan;
-       unsigned long nswap;
-       unsigned long cnswap;
-       int exit_signal;
-       int processor;
-       unsigned int rt_priority;
-       unsigned int policy;
-       unsigned long long delayacct_blkio_ticks;
-       unsigned long guest_time;
-       long cguest_time;
-   } FastProcessInfo;
+typedef struct fast_process_info {
+    int field_count;  //field count in /proc/$pid/stat
+    int pid;
+    char comm[128];
+    char state;
+    int ppid;
+    int pgrp;
+    int session;
+    int tty_nr;
+    int tpgid;
+    unsigned int flags;
+    unsigned long minflt;
+    unsigned long cminflt;
+    unsigned long majflt;
+    unsigned long cmajflt;
+    unsigned long utime;
+    unsigned long stime;
+    long cutime;
+    long cstime;
+    long priority;
+    long nice;
+    long num_threads;
+    long itrealvalue;
+    struct timeval starttime;
+    unsigned long vsize;
+    long rss;
+    unsigned long rsslim;
+    unsigned long startcode;
+    unsigned long endcode;
+    unsigned long startstack;
+    unsigned long kstkesp;
+    unsigned long kstkeip;
+    unsigned long signal;
+    unsigned long blocked;
+    unsigned long sigignore;
+    unsigned long sigcatch;
+    unsigned long wchan;
+    unsigned long nswap;
+    unsigned long cnswap;
+    int exit_signal;
+    int processor;
+    unsigned int rt_priority;
+    unsigned int policy;
+    unsigned long long delayacct_blkio_ticks;
+    unsigned long guest_time;
+    long cguest_time;
+} FastProcessInfo;
 #endif
 
 /** get system total memory size
@@ -142,7 +142,7 @@ int get_boot_time(struct timeval *boot_time);
  *  return: error no , 0 success, != 0 fail
 */
 int get_mounted_filesystems(struct fast_statfs *stats,
-        const int size, int *count);
+                            const int size, int *count);
 
 #if defined(OS_LINUX) || defined(OS_FREEBSD)
 /** get processes

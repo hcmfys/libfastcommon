@@ -1,36 +1,30 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <math.h>
 #include <time.h>
 #include <inttypes.h>
 #include <sys/types.h>
-#include <sys/time.h>
-#include <sys/stat.h>
-#include "fastcommon/logger.h"
-#include "fastcommon/shared_func.h"
-#include "fastcommon/sched_thread.h"
-#include "fastcommon/ini_file_reader.h"
-#include "fastcommon/fast_mblock.h"
-#include "fastcommon/sockopt.h"
-#include "fastcommon/system_info.h"
-#include "fastcommon/local_ip_func.h"
+#include "../logger.h"
+#include "../shared_func.h"
+#include "../sched_thread.h"
+#include "../ini_file_reader.h"
+#include "../fast_mblock.h"
+#include "../sockopt.h"
+#include "../system_info.h"
+#include "../local_ip_func.h"
 
 struct my_struct {
     struct fast_mblock_man *mblock;
     void *obj;
 };
 
-static int test_delay(void *args)
-{
+static int test_delay(void *args) {
     struct my_struct *my;
-    my = (struct my_struct *)args;
+    my = (struct my_struct *) args;
     fast_mblock_free_object(my->mblock, my->obj);
     return 0;
 }
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
     int64_t start_time;
     int64_t end_time;
     int64_t mem_size;
@@ -61,20 +55,20 @@ int main(int argc, char *argv[])
 
     getifconfigs(if_configs, sizeof(if_configs) / sizeof(if_configs[0]), &count);
     printf("ifconfig count: %d\n", count);
-    for (i=0; i<count; i++) {
+    for (i = 0; i < count; i++) {
         printf("%s ipv4: %s, ipv6: %s, mac: %s\n",
-                if_configs[i].name, if_configs[i].ipv4,
-                if_configs[i].ipv6, if_configs[i].mac); 
+               if_configs[i].name, if_configs[i].ipv4,
+               if_configs[i].ipv6, if_configs[i].mac);
     }
 
     get_mounted_filesystems(stats, sizeof(stats) / sizeof(stats[0]), &count);
     printf("mounted fs count: %d\n", count);
-    for (i=0; i<count; i++) {
+    for (i = 0; i < count; i++) {
         printf("%s => %s %s %ld %ld %ld %ld %ld %ld %ld\n",
-                stats[i].f_mntfromname, stats[i].f_mntonname, stats[i].f_fstypename,
-                stats[i].f_type, stats[i].f_bsize, stats[i].f_blocks,
-                stats[i].f_bfree, stats[i].f_bavail, stats[i].f_files,
-                stats[i].f_ffree);
+               stats[i].f_mntfromname, stats[i].f_mntonname, stats[i].f_fstypename,
+               stats[i].f_type, stats[i].f_bsize, stats[i].f_blocks,
+               stats[i].f_bfree, stats[i].f_bavail, stats[i].f_files,
+               stats[i].f_ffree);
     }
 
 #if defined(OS_LINUX) || defined(OS_FREEBSD)
@@ -97,21 +91,21 @@ int main(int argc, char *argv[])
             free(processes);
         }
 
-	if (get_sysinfo(&info) == 0)
-	{
-		printf("boot time: %d sec, %d usec\n",
+    if (get_sysinfo(&info) == 0)
+    {
+        printf("boot time: %d sec, %d usec\n",
                 (int)info.boot_time.tv_sec,
                 (int)info.boot_time.tv_usec);
-		printf("loads: %.2f, %.2f, %.2f\n",
+        printf("loads: %.2f, %.2f, %.2f\n",
                 info.loads[0], info.loads[1], info.loads[2]);
-		printf("totalram: %ld\n", info.totalram);
-		printf("freeram: %ld\n", info.freeram);
-		printf("sharedram: %ld\n", info.sharedram);
-		printf("bufferram: %ld\n", info.bufferram);
-		printf("totalswap: %ld\n", info.totalswap);
-		printf("freeswap: %ld\n", info.freeswap);
-		printf("procs: %d\n", info.procs);
-	}
+        printf("totalram: %ld\n", info.totalram);
+        printf("freeram: %ld\n", info.freeram);
+        printf("sharedram: %ld\n", info.sharedram);
+        printf("bufferram: %ld\n", info.bufferram);
+        printf("totalswap: %ld\n", info.totalswap);
+        printf("freeswap: %ld\n", info.freeswap);
+        printf("procs: %d\n", info.procs);
+    }
 
     stat("/dev/zero", &st);
     printf("file inode: %ld\n", (long)st.st_ino);
@@ -153,7 +147,7 @@ int main(int argc, char *argv[])
     scheduleArray.entries = scheduleEntries;
     scheduleArray.count = 0;
     sched_start(&scheduleArray, &schedule_tid,
-            64 * 1024, (bool * volatile)&continue_flag);
+                64 * 1024, (bool *volatile) &continue_flag);
 
     if (get_sys_total_mem_size(&mem_size) == 0) {
         printf("total memory size: %"PRId64" MB\n", mem_size / (1024 * 1024));
@@ -161,17 +155,16 @@ int main(int argc, char *argv[])
     printf("cpu count: %d\n", get_sys_cpu_count());
 
     end_time = get_current_time_ms();
-    logInfo("time used: %d ms", (int)(end_time - start_time));
+    logInfo("time used: %d ms", (int) (end_time - start_time));
 
     fast_mblock_manager_init();
 
     fast_mblock_init_ex2(&mblock1, "mblock1", 1024, 128, NULL, false, NULL, NULL, NULL);
     fast_mblock_init_ex2(&mblock2, "mblock2", 1024, 100, NULL, false, NULL, NULL, NULL);
-   
+
     count = 2048;
-    objs = (struct my_struct *)malloc(sizeof(struct my_struct) * count);
-    for (i=0; i<count; i++)
-    {
+    objs = (struct my_struct *) malloc(sizeof(struct my_struct) * count);
+    for (i = 0; i < count; i++) {
         int delay;
 
         delay = (30L * rand()) / RAND_MAX;

@@ -45,8 +45,8 @@ char *toUppercase(char *src);
  *  return: formated date string
 */
 char *formatDatetime(const time_t nTime, \
-	const char *szDateFormat, \
-	char *buff, const int buff_size);
+    const char *szDateFormat, \
+    char *buff, const int buff_size);
 
 /** get character count, only support GB charset
  *  parameters:
@@ -70,7 +70,7 @@ char *replaceCRLF2Space(char *s);
  *  return: absolute path, NULL for fail
 */
 char *getAbsolutePath(const char *fileame, char *szAbsPath, \
-				const int pathSize);
+                const int pathSize);
 
 /** get the executable file absolute filename
  *  parameters:
@@ -80,7 +80,7 @@ char *getAbsolutePath(const char *fileame, char *szAbsPath, \
  *  return: absolute filename, NULL for fail
 */
 char *getExeAbsoluteFilename(const char *exeFilename, char *szAbsFilename, \
-		const int maxSize);
+        const int maxSize);
 
 #ifndef WIN32
 
@@ -101,7 +101,7 @@ int getProccessCount(const char *progName, const bool bAllOwners);
  *  return: proccess count, >= 0 success, < 0 fail
 */
 int getUserProcIds(const char *progName, const bool bAllOwners, \
-			int pids[], const int arrSize);
+            int pids[], const int arrSize);
 
 /** execute program, get it's output
  *  parameters:
@@ -199,10 +199,9 @@ int64_t buff2long(const char *buff);
  *  	buff: the buffer, at least 4 bytes space, no tail \0
  *  return: none
 */
-static inline void float2buff(float f, char *buff)
-{
+static inline void float2buff(float f, char *buff) {
     int *p;
-    p = (int *)&f;
+    p = (int *) &f;
     int2buff(*p, buff);
 }
 
@@ -211,13 +210,12 @@ static inline void float2buff(float f, char *buff)
  *  	buff: big-endian 8 bytes buffer
  *  return: 32 bits float value
 */
-static inline float buff2float(const char *buff)
-{
+static inline float buff2float(const char *buff) {
     int n;
     float *p;
 
     n = buff2int(buff);
-    p = (float *)&n;
+    p = (float *) &n;
     return *p;
 }
 
@@ -227,10 +225,9 @@ static inline float buff2float(const char *buff)
  *  	buff: the buffer, at least 8 bytes space, no tail \0
  *  return: none
 */
-static inline void double2buff(double d, char *buff)
-{
+static inline void double2buff(double d, char *buff) {
     int64_t *p;
-    p = (int64_t *)&d;
+    p = (int64_t *) &d;
     long2buff(*p, buff);
 }
 
@@ -239,13 +236,12 @@ static inline void double2buff(double d, char *buff)
  *  	buff: big-endian 8 bytes buffer
  *  return: 64 bits double value
 */
-static inline double buff2double(const char *buff)
-{
+static inline double buff2double(const char *buff) {
     int64_t n;
     double *p;
 
     n = buff2long(buff);
-    p = (double *)&n;
+    p = (double *) &n;
     return *p;
 }
 
@@ -275,11 +271,10 @@ char *trim(char *pStr);
  *  	pStr: the string to trim
  *  return: trimed string porinter as pStr
 */
-static inline char *fc_trim(char *pStr)
-{
-	trim_right(pStr);
-	trim_left(pStr);
-	return pStr;
+static inline char *fc_trim(char *pStr) {
+    trim_right(pStr);
+    trim_left(pStr);
+    return pStr;
 }
 
 /** trim leading spaces ( \t\r\n)
@@ -302,8 +297,7 @@ void string_rtrim(string_t *s);
         string_rtrim(s);  \
     } while (0)
 
-static inline void string_trim(string_t *s)
-{
+static inline void string_trim(string_t *s) {
     FC_STRING_TRIM(s);
 }
 
@@ -371,7 +365,7 @@ int getOccurCount(const char *src, const char seperator);
  *  return: string array, should call freeSplit to free, return NULL when fail
 */
 char **split(char *src, const char seperator, const int nMaxCols, \
-		int *nColCount);
+        int *nColCount);
 
 /** free split results
  *  parameters:
@@ -478,7 +472,7 @@ void set_log_level(char *pLogLevel);
  *  return: error no , 0 success, != 0 fail
 */
 int load_allow_hosts(IniContext *pIniContext, \
-		in_addr_t **allow_ip_addrs, int *allow_ip_count);
+        in_addr_t **allow_ip_addrs, int *allow_ip_count);
 
 /** get time item from config context
  *  parameters:
@@ -490,8 +484,8 @@ int load_allow_hosts(IniContext *pIniContext, \
  *  return: error no , 0 success, != 0 fail
 */
 int get_time_item_from_conf(IniContext *pIniContext, \
-		const char *item_name, TimeInfo *pTimeInfo, \
-		const byte default_hour, const byte default_minute);
+        const char *item_name, TimeInfo *pTimeInfo, \
+        const byte default_hour, const byte default_minute);
 
 
 /** get time item from string
@@ -504,8 +498,8 @@ int get_time_item_from_conf(IniContext *pIniContext, \
  *  return: error no , 0 success, != 0 fail
 */
 int get_time_item_from_str(const char *pValue, const char *item_name,
-        TimeInfo *pTimeInfo, const byte default_hour,
-        const byte default_minute);
+                           TimeInfo *pTimeInfo, const byte default_hour,
+                           const byte default_minute);
 
 /** trim path tail char /
  *  parameters:
@@ -532,7 +526,7 @@ int getFileContent(const char *filename, char **buff, int64_t *file_size);
  *  return: error no , 0 success, != 0 fail
 */
 int getFileContentEx(const char *filename, char *buff, \
-		int64_t offset, int64_t *size);
+        int64_t offset, int64_t *size);
 
 /** write to file
  *  parameters:
@@ -551,7 +545,7 @@ int writeToFile(const char *filename, const char *buff, const int file_size);
  *  return: error no , 0 success, != 0 fail
 */
 int safeWriteToFile(const char *filename, const char *buff, \
-		const int file_size);
+        const int file_size);
 
 /** get a line from file
  *  parameters:
@@ -641,7 +635,7 @@ int set_rand_seed();
  *  return: error no , 0 success, != 0 fail
 */
 int set_timer(const int first_remain_seconds, const int interval, \
-		void (*sighandler)(int));
+        void (*sighandler)(int));
 
 /** set file access and modified times
  *  parameters:
@@ -657,12 +651,12 @@ int set_file_utimes(const char *filename, const time_t new_time);
 int ignore_signal_pipe();
 
 double get_line_distance_km(const double lat1, const double lon1,
-        const double lat2, const double lon2);
+                            const double lat2, const double lon2);
 
 /** is private ip address for IPv4
  *  return: true for private ip, otherwise false
  */
-bool is_private_ip(const char* ip);
+bool is_private_ip(const char *ip);
 
 
 /** get current time in us
@@ -781,8 +775,7 @@ key_t fc_ftok(const char *path, const int proj_id);
 */
 const char *int2str(const int n, char *buff, const bool thousands_separator);
 
-static inline const char *int_to_comma_str(const int n, char *buff)
-{
+static inline const char *int_to_comma_str(const int n, char *buff) {
     return int2str(n, buff, true);
 }
 
@@ -795,8 +788,7 @@ static inline const char *int_to_comma_str(const int n, char *buff)
 */
 const char *long2str(const int64_t n, char *buff, const bool thousands_separator);
 
-static inline const char *long_to_comma_str(const int64_t n, char *buff)
-{
+static inline const char *long_to_comma_str(const int64_t n, char *buff) {
     return long2str(n, buff, true);
 }
 
@@ -849,7 +841,7 @@ char *format_http_date(time_t t, BufferInfo *buffer);
  *  return: the resolved full path filename
 */
 char *resolve_path(const char *from, const char *filename,
-        char *full_filename, const int size);
+                   char *full_filename, const int size);
 
 #ifdef __cplusplus
 }

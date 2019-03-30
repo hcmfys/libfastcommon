@@ -18,26 +18,23 @@
 #include "common_define.h"
 
 /* malloc chain */
-struct fast_mpool_malloc
-{
-	int alloc_size;
+struct fast_mpool_malloc {
+    int alloc_size;
     char *base_ptr;
     char *end_ptr;
     char *free_ptr;
-	struct fast_mpool_malloc *malloc_next;
-	struct fast_mpool_malloc *free_next;
+    struct fast_mpool_malloc *malloc_next;
+    struct fast_mpool_malloc *free_next;
 };
 
-struct fast_mpool_man
-{
-	struct fast_mpool_malloc *malloc_chain_head; //malloc chain to be freed
-	struct fast_mpool_malloc *free_chain_head;   //free node chain
-	int alloc_size_once;  //alloc size once, default: 1MB
-	int discard_size;     //discard size, default: 64 bytes
+struct fast_mpool_man {
+    struct fast_mpool_malloc *malloc_chain_head; //malloc chain to be freed
+    struct fast_mpool_malloc *free_chain_head;   //free node chain
+    int alloc_size_once;  //alloc size once, default: 1MB
+    int discard_size;     //discard size, default: 64 bytes
 };
 
-struct fast_mpool_stats
-{
+struct fast_mpool_stats {
     int64_t total_bytes;
     int64_t free_bytes;
     int total_trunk_count;
@@ -57,7 +54,7 @@ parameters:
 return error no, 0 for success, != 0 fail
 */
 int fast_mpool_init(struct fast_mpool_man *mpool,
-		const int alloc_size_once, const int discard_size);
+                    const int alloc_size_once, const int discard_size);
 
 /**
 mpool destroy
@@ -93,7 +90,7 @@ parameters:
 return error no, 0 for success, != 0 fail
 */
 int fast_mpool_strdup_ex(struct fast_mpool_man *mpool, string_t *dest,
-        const char *src, const int len);
+                         const char *src, const int len);
 
 /**
 alloc and copy string from the mpool
@@ -104,8 +101,7 @@ parameters:
 return error no, 0 for success, != 0 fail
 */
 static inline int fast_mpool_strdup(struct fast_mpool_man *mpool,
-        string_t *dest, const char *src)
-{
+                                    string_t *dest, const char *src) {
     int len;
     len = (src != NULL) ? strlen(src) : 0;
     return fast_mpool_strdup_ex(mpool, dest, src, len);
@@ -120,8 +116,7 @@ parameters:
 return error no, 0 for success, != 0 fail
 */
 static inline int fast_mpool_strdup2(struct fast_mpool_man *mpool,
-        string_t *dest, const string_t *src)
-{
+                                     string_t *dest, const string_t *src) {
     return fast_mpool_strdup_ex(mpool, dest, src->str, src->len);
 }
 

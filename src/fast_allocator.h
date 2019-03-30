@@ -18,46 +18,42 @@
 #include "common_define.h"
 #include "fast_mblock.h"
 
-struct fast_allocator_info
-{
-	int index;
-	short magic_number;
-	bool pooled;
-	struct fast_mblock_man mblock;
+struct fast_allocator_info {
+    int index;
+    short magic_number;
+    bool pooled;
+    struct fast_mblock_man mblock;
 };
 
-struct fast_region_info
-{
-	int start;
-	int end;
-	int step;
-	int alloc_elements_once;
-	int pad_mask;  //for internal use
-	struct fast_allocator_info *allocators;
+struct fast_region_info {
+    int start;
+    int end;
+    int step;
+    int alloc_elements_once;
+    int pad_mask;  //for internal use
+    struct fast_allocator_info *allocators;
 };
 
-struct fast_allocator_array
-{
-	int count;
-	int alloc;
-	int reclaim_interval;   //<= 0 for never reclaim
-	int last_reclaim_time;
-	volatile int64_t malloc_bytes;   //total alloc bytes
-	int64_t malloc_bytes_limit;       //water mark bytes for malloc
-	double expect_usage_ratio;
-	struct fast_allocator_info **allocators;
+struct fast_allocator_array {
+    int count;
+    int alloc;
+    int reclaim_interval;   //<= 0 for never reclaim
+    int last_reclaim_time;
+    volatile int64_t malloc_bytes;   //total alloc bytes
+    int64_t malloc_bytes_limit;       //water mark bytes for malloc
+    double expect_usage_ratio;
+    struct fast_allocator_info **allocators;
 };
 
-struct fast_allocator_context
-{
-	struct fast_region_info *regions;
-	int region_count;
+struct fast_allocator_context {
+    struct fast_region_info *regions;
+    int region_count;
 
-	struct fast_allocator_array allocator_array;
+    struct fast_allocator_array allocator_array;
 
-	int64_t alloc_bytes_limit;       //mater mark bytes for alloc
-	volatile int64_t alloc_bytes;    //total alloc bytes
-	bool need_lock;     //if need mutex lock for acontext
+    int64_t alloc_bytes_limit;       //mater mark bytes for alloc
+    volatile int64_t alloc_bytes;    //total alloc bytes
+    bool need_lock;     //if need mutex lock for acontext
 };
 
 #ifdef __cplusplus
@@ -75,8 +71,8 @@ parameters:
 return error no, 0 for success, != 0 fail
 */
 int fast_allocator_init(struct fast_allocator_context *acontext,
-        const int64_t alloc_bytes_limit, const double expect_usage_ratio,
-        const int reclaim_interval, const bool need_lock);
+                        const int64_t alloc_bytes_limit, const double expect_usage_ratio,
+                        const int reclaim_interval, const bool need_lock);
 
 /**
 allocator init
@@ -91,9 +87,9 @@ parameters:
 return error no, 0 for success, != 0 fail
 */
 int fast_allocator_init_ex(struct fast_allocator_context *acontext,
-        struct fast_region_info *regions, const int region_count,
-        const int64_t alloc_bytes_limit, const double expect_usage_ratio,
-        const int reclaim_interval, const bool need_lock);
+                           struct fast_region_info *regions, const int region_count,
+                           const int64_t alloc_bytes_limit, const double expect_usage_ratio,
+                           const int reclaim_interval, const bool need_lock);
 
 /**
 allocator destroy
@@ -109,8 +105,8 @@ parameters:
 	bytes: alloc bytes
 return the alloced pointer, return NULL if fail
 */
-void* fast_allocator_alloc(struct fast_allocator_context *acontext,
-	const int bytes);
+void *fast_allocator_alloc(struct fast_allocator_context *acontext,
+                           const int bytes);
 
 /**
 free a node (put a node to the context)
@@ -129,7 +125,7 @@ parameters:
 return error no, 0 for success, != 0 fail
 */
 int fast_allocator_retry_reclaim(struct fast_allocator_context *acontext,
-	int64_t *total_reclaim_bytes);
+                                 int64_t *total_reclaim_bytes);
 
 #ifdef __cplusplus
 }

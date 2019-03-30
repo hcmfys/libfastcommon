@@ -18,14 +18,12 @@
 #include "skiplist_common.h"
 #include "fast_mblock.h"
 
-typedef struct skiplist_set_node
-{
+typedef struct skiplist_set_node {
     void *data;
     struct skiplist_set_node *links[0];
 } SkiplistSetNode;
 
-typedef struct skiplist_set
-{
+typedef struct skiplist_set {
     int level_count;
     int top_level_index;
     skiplist_compare_func compare_func;
@@ -50,26 +48,28 @@ extern "C" {
     SKIPLIST_DEFAULT_MIN_ALLOC_ELEMENTS_ONCE)
 
 int skiplist_set_init_ex(SkiplistSet *sl, const int level_count,
-        skiplist_compare_func compare_func, skiplist_free_func free_func,
-        const int min_alloc_elements_once);
+                         skiplist_compare_func compare_func, skiplist_free_func free_func,
+                         const int min_alloc_elements_once);
 
 void skiplist_set_destroy(SkiplistSet *sl);
 
 int skiplist_set_insert(SkiplistSet *sl, void *data);
-int skiplist_set_delete(SkiplistSet *sl, void *data);
-void *skiplist_set_find(SkiplistSet *sl, void *data);
-int skiplist_set_find_all(SkiplistSet *sl, void *data, SkiplistSetIterator *iterator);
-int skiplist_set_find_range(SkiplistSet *sl, void *start_data, void *end_data,
-        SkiplistSetIterator *iterator);
 
-static inline void skiplist_set_iterator(SkiplistSet *sl, SkiplistSetIterator *iterator)
-{
+int skiplist_set_delete(SkiplistSet *sl, void *data);
+
+void *skiplist_set_find(SkiplistSet *sl, void *data);
+
+int skiplist_set_find_all(SkiplistSet *sl, void *data, SkiplistSetIterator *iterator);
+
+int skiplist_set_find_range(SkiplistSet *sl, void *start_data, void *end_data,
+                            SkiplistSetIterator *iterator);
+
+static inline void skiplist_set_iterator(SkiplistSet *sl, SkiplistSetIterator *iterator) {
     iterator->current = sl->top->links[0];
     iterator->tail = sl->tail;
 }
 
-static inline void *skiplist_set_next(SkiplistSetIterator *iterator)
-{
+static inline void *skiplist_set_next(SkiplistSetIterator *iterator) {
     void *data;
 
     if (iterator->current == iterator->tail) {
@@ -81,8 +81,7 @@ static inline void *skiplist_set_next(SkiplistSetIterator *iterator)
     return data;
 }
 
-static inline bool skiplist_set_empty(SkiplistSet *sl)
-{
+static inline bool skiplist_set_empty(SkiplistSet *sl) {
     return sl->top->links[0] == sl->tail;
 }
 

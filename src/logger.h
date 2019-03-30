@@ -19,10 +19,10 @@ extern "C" {
 #endif
 
 //log time precision
-#define LOG_TIME_PRECISION_SECOND	's'  //second
-#define LOG_TIME_PRECISION_MSECOND	'm'  //millisecond
-#define LOG_TIME_PRECISION_USECOND	'u'  //microsecond
-#define LOG_TIME_PRECISION_NONE 	'0'  //do NOT output timestamp
+#define LOG_TIME_PRECISION_SECOND    's'  //second
+#define LOG_TIME_PRECISION_MSECOND    'm'  //millisecond
+#define LOG_TIME_PRECISION_USECOND    'u'  //microsecond
+#define LOG_TIME_PRECISION_NONE    '0'  //do NOT output timestamp
 
 //log compress flags
 #define LOG_COMPRESS_FLAGS_NONE       0
@@ -34,48 +34,47 @@ struct log_context;
 //log header line callback
 typedef void (*LogHeaderCallback)(struct log_context *pContext);
 
-typedef struct log_context
-{
-	/* log level value please see: sys/syslog.h
-  	   default value is LOG_INFO */
-	int log_level;
+typedef struct log_context {
+    /* log level value please see: sys/syslog.h
+         default value is LOG_INFO */
+    int log_level;
 
-	/* default value is STDERR_FILENO */
-	int log_fd;
+    /* default value is STDERR_FILENO */
+    int log_fd;
 
-	/* cache buffer */
-	char *log_buff;
+    /* cache buffer */
+    char *log_buff;
 
-	/* string end in the cache buffer for next sprintf */
-	char *pcurrent_buff;
+    /* string end in the cache buffer for next sprintf */
+    char *pcurrent_buff;
 
-	/* mutext lock */
-	pthread_mutex_t log_thread_lock;
+    /* mutext lock */
+    pthread_mutex_t log_thread_lock;
 
-	/*
-	rotate the log when the log file exceeds this parameter
-	rotate_size > 0 means need rotate log by log file size
-	*/
-	int64_t rotate_size;
+    /*
+    rotate the log when the log file exceeds this parameter
+    rotate_size > 0 means need rotate log by log file size
+    */
+    int64_t rotate_size;
 
-	/* log file current size */
-	int64_t current_size;
+    /* log file current size */
+    int64_t current_size;
 
-	/* if write to buffer firstly, then sync to disk.
-	   default value is false (no cache) */
-	bool log_to_cache;
+    /* if write to buffer firstly, then sync to disk.
+       default value is false (no cache) */
+    bool log_to_cache;
 
-	/* if rotate the access log */
-	bool rotate_immediately;
+    /* if rotate the access log */
+    bool rotate_immediately;
 
-	/* if stderr to the log file */
+    /* if stderr to the log file */
     bool take_over_stderr;
 
-	/* if stdout to the log file */
+    /* if stdout to the log file */
     bool take_over_stdout;
 
-	/* time precision */
-	char time_precision;
+    /* time precision */
+    char time_precision;
 
     /* if use file write lock */
     bool use_file_write_lock;
@@ -83,10 +82,10 @@ typedef struct log_context
     /* compress the log file use gzip command */
     short compress_log_flags;
 
-	/* save the log filename */
-	char log_filename[MAX_PATH_SIZE];
+    /* save the log filename */
+    char log_filename[MAX_PATH_SIZE];
 
-	/* the time format for rotated filename,
+    /* the time format for rotated filename,
      * default: %Y%m%d_%H%M%S
      * */
     char rotate_time_format[32];
@@ -119,10 +118,8 @@ int log_init();
  *  do nothing when already inited
  *  return: 0 for success, != 0 fail
 */
-static inline int log_try_init()
-{
-    if (g_log_context.log_buff != NULL)
-    {
+static inline int log_try_init() {
+    if (g_log_context.log_buff != NULL) {
         return 0;
     }
     return log_init();
@@ -136,10 +133,10 @@ int log_init2();
 #define log_reopen() log_reopen_ex(&g_log_context)
 
 #define log_set_prefix(base_path, filename_prefix) \
-	log_set_prefix_ex(&g_log_context, base_path, filename_prefix)
+    log_set_prefix_ex(&g_log_context, base_path, filename_prefix)
 
 #define log_set_filename(log_filename) \
-	log_set_filename_ex(&g_log_context, log_filename)
+    log_set_filename_ex(&g_log_context, log_filename)
 
 #define log_set_cache(bLogCache)  log_set_cache_ex(&g_log_context, bLogCache)
 
@@ -182,7 +179,7 @@ int log_reopen_ex(LogContext *pContext);
  *  return: 0 for success, != 0 fail
 */
 int log_set_prefix_ex(LogContext *pContext, const char *base_path, \
-		const char *filename_prefix);
+        const char *filename_prefix);
 
 /** set log filename
  *  parameters:
@@ -295,7 +292,7 @@ void log_destroy_ex(LogContext *pContext);
  *  return: none
 */
 void log_it_ex(LogContext *pContext, const int priority, \
-		const char *format, ...) __gcc_attribute__ ((format (printf, 3, 4)));
+        const char *format, ...) __gcc_attribute__ ((format (printf, 3, 4)));
 
 /** log to file
  *  parameters:
@@ -306,7 +303,7 @@ void log_it_ex(LogContext *pContext, const int priority, \
  *  return: none
 */
 void log_it_ex1(LogContext *pContext, const int priority, \
-		const char *text, const int text_len);
+        const char *text, const int text_len);
 
 /** log to file
  *  parameters:
@@ -318,7 +315,7 @@ void log_it_ex1(LogContext *pContext, const int priority, \
  *  return: none
 */
 void log_it_ex2(LogContext *pContext, const char *caption, \
-		const char *text, const int text_len, \
+        const char *text, const int text_len, \
         const bool bNeedSync, const bool bNeedLock);
 
 
@@ -361,31 +358,31 @@ const char *log_get_level_caption_ex(LogContext *pContext);
 #define log_get_level_caption() log_get_level_caption_ex(&g_log_context)
 
 void logEmergEx(LogContext *pContext, const char *format, ...)
-    __gcc_attribute__ ((format (printf, 2, 3)));
+__gcc_attribute__ ((format (printf, 2, 3)));
 
 void logCritEx(LogContext *pContext, const char *format, ...)
-    __gcc_attribute__ ((format (printf, 2, 3)));
+__gcc_attribute__ ((format (printf, 2, 3)));
 
 void logAlertEx(LogContext *pContext, const char *format, ...)
-    __gcc_attribute__ ((format (printf, 2, 3)));
+__gcc_attribute__ ((format (printf, 2, 3)));
 
 void logErrorEx(LogContext *pContext, const char *format, ...)
-    __gcc_attribute__ ((format (printf, 2, 3)));
+__gcc_attribute__ ((format (printf, 2, 3)));
 
 void logWarningEx(LogContext *pContext, const char *format, ...)
-    __gcc_attribute__ ((format (printf, 2, 3)));
+__gcc_attribute__ ((format (printf, 2, 3)));
 
 void logNoticeEx(LogContext *pContext, const char *format, ...)
-    __gcc_attribute__ ((format (printf, 2, 3)));
+__gcc_attribute__ ((format (printf, 2, 3)));
 
 void logInfoEx(LogContext *pContext, const char *format, ...)
-    __gcc_attribute__ ((format (printf, 2, 3)));
+__gcc_attribute__ ((format (printf, 2, 3)));
 
 void logDebugEx(LogContext *pContext, const char *format, ...)
-    __gcc_attribute__ ((format (printf, 2, 3)));
+__gcc_attribute__ ((format (printf, 2, 3)));
 
 void logAccess(LogContext *pContext, struct timeval *tvStart,
-        const char *format, ...) __gcc_attribute__ ((format (printf, 3, 4)));
+               const char *format, ...) __gcc_attribute__ ((format (printf, 3, 4)));
 
 //#define LOG_FORMAT_CHECK
 
@@ -404,28 +401,28 @@ void logAccess(LogContext *pContext, struct timeval *tvStart,
 
 /* following functions use global log context: g_log_context */
 void logEmerg(const char *format, ...)
-    __gcc_attribute__ ((format (printf, 1, 2)));
+__gcc_attribute__ ((format (printf, 1, 2)));
 
 void logCrit(const char *format, ...)
-    __gcc_attribute__ ((format (printf, 1, 2)));
+__gcc_attribute__ ((format (printf, 1, 2)));
 
 void logAlert(const char *format, ...)
-    __gcc_attribute__ ((format (printf, 1, 2)));
+__gcc_attribute__ ((format (printf, 1, 2)));
 
 void logError(const char *format, ...)
-    __gcc_attribute__ ((format (printf, 1, 2)));
+__gcc_attribute__ ((format (printf, 1, 2)));
 
 void logWarning(const char *format, ...)
-    __gcc_attribute__ ((format (printf, 1, 2)));
+__gcc_attribute__ ((format (printf, 1, 2)));
 
 void logNotice(const char *format, ...)
-    __gcc_attribute__ ((format (printf, 1, 2)));
+__gcc_attribute__ ((format (printf, 1, 2)));
 
 void logInfo(const char *format, ...)
-    __gcc_attribute__ ((format (printf, 1, 2)));
+__gcc_attribute__ ((format (printf, 1, 2)));
 
 void logDebug(const char *format, ...)
-    __gcc_attribute__ ((format (printf, 1, 2)));
+__gcc_attribute__ ((format (printf, 1, 2)));
 
 #endif
 
